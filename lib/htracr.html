@@ -28,7 +28,10 @@
 <div id="msg"></div>
 <div id="paper"></div>
 <script src="/raphael"></script>
+<script src="/jquery"></script>
 <script>
+
+$("#msg").draggable();
 
 Raphael.fn.line = function(s, e) {
 	if (s[0] == e[0] && s[1] == e[1]) {
