@@ -3,21 +3,27 @@ var http = require('http');
 var path = require("path");
 var url = require("url");
 
-// load static assets
-var static = {
-  'raphael': fs.readFileSync('lib/raphael-min.js'),
-  'jquery': fs.readFileSync('lib/jquery-min.js'),
-  'htracr': fs.readFileSync('lib/htracr.html'),
-}
 
+// load static assets
+function load(name, media_type) {
+  return [fs.readFileSync("lib/" + name), media_type];
+}
+var static = {
+  'raphael': load('raphael-min.js', 'application/javascript'),
+  'jquery': load('jquery-min.js', 'application/javascript'),
+  'jquery-ui': load('jquery-ui-min.js', 'application/javascript'),
+  'jquery-ui-style': load('jquery-ui.css', 'text/css'),
+  'zoom': load('zoom.js', 'application/javascript'),
+  '': load('htracr.html', 'text/html'),
+}
   
 function req_done(request, response, htracr) {
   var path = url.parse(request.url).pathname;
   var path_segs = path.split("/");
   path_segs.shift();
-  var root = path_segs.shift();
-  switch (root) {
-    case 'state':
+  var seg = path_segs.shift();
+  switch (seg) {
+    case 'conns':
       response.writeHead(200, {
         'Content-Type': 'application/json'
       })
@@ -32,28 +38,20 @@ function req_done(request, response, htracr) {
       // FIXME: check method
       response.writeHead(200, {})
       response.end()
-    case 'raphael':
-      response.writeHead(200, {
-        'Content-Type': "application/javascript",
-        'Cache-Control': "max-age=7200"
-      })
-      response.end(static['raphael']);
-      break;
-    case 'jquery':
-      response.writeHead(200, {
-        'Content-Type': "application/javascript",
-        'Cache-Control': "max-age=7200"
-      })
-      response.end(static['jquery']);
-      break;
     default:
-      response.writeHead(200, {'Content-Type': 'text/html'});
-      response.end(static['htracr']);
+      if (seg in static) {
+        response.writeHead(200, {
+          'Content-Type': static[seg][1],
+          'Cache-Control': "max-age=7200"
+        })
+        response.end(static[seg][0])
+      } else {
+        response.writeHead(404, {'Content-Type': "text/html"});
+        response.end("<html><body><h1>Not Found</h1></body></html>")
+      }
       break;
   }
 };
-
-
 
 exports.start = function(port, htracr) {
   http.createServer(function (request, response) {

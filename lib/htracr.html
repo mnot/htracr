@@ -5,33 +5,96 @@
 		font-family: helvetica, arial, sans-serif;
 	}
 	#msg {
+		font-family: monospace;
+		font-size: 0.7em;
 		position: fixed;
-		top: 30px;
+		top: 10px;
 		right: 30px;
-		width: 500px;
-		height: 200px;
+		width: 600px;
+		height: 250px;
 		background-color: white;
 		border: 1px dotted #999;
 		opacity: 0.9;
-		font-size: 0.9em;
 	}
 	#paper {
 		margin-top: 150px;
 	}
+	#control {
+		position: fixed;	
+		top: 10px;	
+		left: 20px;
+	}
+	.close-btn {
+  display: block;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  height: 0;
+  width: 18px;
+  padding: 18px 0 0 0;
+  overflow: hidden;
+  background: #000000 none;
+  border: 2.04545454545455px solid #ffffff;
+  -moz-border-radius: 18px;
+  -webkit-border-radius: 18px;
+  border-radius: 18px;
+  box-shadow: 0 0 6px #000000, 1.63636363636364px 1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3), -1.63636363636364px 1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3), 1.63636363636364px -1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3), -1.63636363636364px -1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3);
+  -ms-box-shadow: 0 0 6px #000000, 1.63636363636364px 1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3), -1.63636363636364px 1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3), 1.63636363636364px -1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3), -1.63636363636364px -1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 0 6px #000000, 1.63636363636364px 1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3), -1.63636363636364px 1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3), 1.63636363636364px -1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3), -1.63636363636364px -1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 0 6px #000000, 1.63636363636364px 1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3), -1.63636363636364px 1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3), 1.63636363636364px -1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3), -1.63636363636364px -1.63636363636364px 1.63636363636364px rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  cursor: pointer;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.close-btn:before {
+  content: "\D7";
+  display: block;
+  text-align: center;
+  width: 18px;
+  position: absolute;
+  top: -1.8px;
+  left: 0;
+  font-size: 18px;
+  line-height: 18px;
+  font-family: "Helvetica Neue", Consolas, Verdana, Tahoma, Calibri, Helvetica, Menlo, "Droid Sans", sans-serif;
+  top: -2px;
+  left: 1px;
+}
 	</style>
+	<link rel="stylesheet" type="text/css" href="/jquery-ui-style">
 </head>
 <body>
 
-<input type="submit" value="update" onclick="return update_state();">
-<input type="submit" value="clear" onclick="return clear_state();">
+<div id="control">
+  <input type="submit" value="update" onclick="return update_state();">
+  <input type="submit" value="clear" onclick="return clear_state();">
+  <input type="text" onchange="zoom(this.value)">
+</div>
 
 <div id="msg"></div>
 <div id="paper"></div>
+
 <script src="/raphael"></script>
 <script src="/jquery"></script>
+<script src="/jquery-ui"></script>
+<script src="/zoom"></script>
 <script>
-
-$("#msg").draggable();
+jQuery.noConflict();
+jQuery(document).ready(function() {
+	jQuery("#msg").draggable();
+	jQuery("#msg").resizable();
+	jQuery("#zoom").slider({
+		max: 3, 
+		min: 1, 
+		step: 0.5, 
+		value: 1,
+		change: function(event, ui) {
+			zoom(ui.value);
+		},
+	});
+});
 
 Raphael.fn.line = function(s, e) {
 	if (s[0] == e[0] && s[1] == e[1]) {
@@ -55,7 +118,7 @@ var first;
 
 
 var htracr = {
-	paper: Raphael(document.getElementById("paper"), w, h),
+	paper: Raphael(document.getElementById("paper"), w, h).initZoom(),
 	msg: document.getElementById("msg"),
 	conns: {},
 	urls: {},
@@ -85,11 +148,11 @@ var htracr = {
 			}
 			y += conn_pad;
 			// line between severs
-			self.paper.line([margin[3], y], [w - margin[1], y]).attr({
-				"stroke": "#ccc",
-				"stroke-width": "1",
-				"stroke-dasharray": ".",
-			});
+//			self.paper.line([margin[3], y], [w - margin[1], y]).attr({
+//				"stroke": "#ccc",
+//				"stroke-width": "1",
+//				"stroke-dasharray": ".",
+//			});
 			y += server_padding;
 		};
 		self.draw_refs();
@@ -111,13 +174,7 @@ var htracr = {
 			switch (item.what) {
 				case "packet-in":
 				case "packet-out":
-					self.paper.circle(
-						self.time_x(item.time), 
-						item.what == 'packet-in' ? y+http_c : y-http_c, http_c
-					).attr({
-						'fill': item.details == "SYN" ? 'red': 'yellow', 
-						"stroke": "none"
-					});
+					self.draw_packet(item, y);
 					break;
 				case "tcp-start":
 					conn_start = self.time_x(item.time);
@@ -172,6 +229,10 @@ var htracr = {
 				"fill": "green",
 				"opacity": .6,
 			});
+			self.hover(req_e, 
+				req[2].method + " " + req[2].url + " HTTP/" + req[2].http_version + 
+				"<br>" + show_hdrs(req[2].headers)
+			);
 			req_e.hover(function(event){
 				var top = [req[2].method + " " + req[2].url] + " HTTP/" + req[2].http_version + "<br>";
 				var hdrs = show_hdrs(req[2].headers);
@@ -181,7 +242,6 @@ var htracr = {
 			});
 
 			var url = "http://" + req[2].headers.Host + req[2].url;
-			console.log("storing url: " + url);
 			self.urls[url] = [my_x, my_y];
 
 			var ref = req[2].headers.Referer;
@@ -203,23 +263,38 @@ var htracr = {
 				"fill": "blue",
 				"opacity": .6,
 			})
-			res_e.hover(function(event){
-				var top = ["HTTP/" + res[2].http_version + " " + res[2].status_code] + "<br>";
-				var hdrs = show_hdrs(res[2].headers);
-				self.msg.innerHTML = top + hdrs;
-			}, function(event) {
-				self.msg.innerHTML = "";
-			});
+			self.hover(res_e, 
+				"HTTP/" + res[2].http_version + " " + res[2].status_code + "<br>" +
+				show_hdrs(res[2].headers)
+			);
+		});
+	},
+
+	draw_packet: function(item, y) {
+		var self = this;
+		var e = self.paper.rect(
+			self.time_x(item.time),
+			item.what == 'packet-out' ? y : y - (conn_w / 2), 
+			2,
+			conn_w / 2
+		).attr({
+			'fill': item.what == 'packet-out' ? 'blue' : 'green', 
+			"stroke": "none"
+		});
+	},
+
+	hover: function(e, html) {
+		e.hover(function(event) {
+			self.msg.innerHTML = html;
+		}, function(event) {
+			self.msg.innerHTML = "";
 		});
 	},
 
 	draw_refs: function() {
 		var self = this;
-		console.log('drawing refs...');
 		for (ref in self.refs) {
-			console.log('checking ref ' + ref);
 			if (self.urls[ref]) {
-				console.log('found ref!');
 				self.refs[ref].forEach(function(s) {
 					self.paper.line(s, self.urls[ref]);					
 				});
@@ -284,7 +359,7 @@ function update_state() {
 			console.log('updated.');
 		}; 
 	};
-	req.open("GET", "/state", true);
+	req.open("GET", "/conns", true);
 	req.send("");
 	return false;
 }
@@ -300,6 +375,11 @@ function clear_state() {
 	req.open("POST", "/clear", true);
 	req.send("");
 	return false;
+}
+
+function zoom(val) {
+	console.log("zooming to " + val + "...");
+	htracr.paper.setZoom(val);
 }
 
 function get_req() {

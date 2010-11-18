@@ -35,10 +35,7 @@ var htracr = {
       var local_port = packet.link.ip.tcp.dport
       what = "packet-in"
     }
-    if (packet.link.ip.tcp.flags.syn)
-      detail = 'SYN'
-    else
-      detail = packet.link.ip.tcp.data_bytes
+//    detail = packet
     this.note(server, local_port, packet.pcap_header.time_ms, what, detail)
   },
 
@@ -83,7 +80,7 @@ function setup_listeners() {
   // listen for packets, decode them, and feed TCP to the tracker
   pcap_session.on('packet', function (raw_packet) {
     var packet = pcap.decode.packet(raw_packet);
-    htracr.note_packet(packet)
+    htracr.note_packet(packet);
     tcp_tracker.track_packet(packet);
   });
 
