@@ -5,13 +5,104 @@ var node_http = require('http')
 var node_url = require('url')
 var pcap = require("pcap")
 var server = require("./server")
-var argv = require('./lib/optimist').argv;
+var argv = require('./lib/optimist').argv
 
-var pcap_session
-    
 
 var htracr = {
   conns: {},
+  pcap_session: undefined,
+
+  start_capture: function() {
+    var self = this
+    var f = "tcp port 80"
+    var b = 10
+    self.pcap_session = pcap.createSession('', f, (b * 1024 * 1024))
+    this.setup_listeners()
+    console.log("Sniffing on " + self.pcap_session.device_name)
+    
+    // Check for pcap dropped packets on an interval
+    setInterval(function () {
+      var stats = self.pcap_session.stats()
+      if (stats.ps_drop > 0) {
+        console.log(
+          "dropped packets, need larger buffer or less work to do: " 
+          + util.inspect(stats)
+        )
+      }
+    }, 2000)
+  },
+  
+  stop_capture: function () {
+    var self = this
+    this.pcap_session.close()
+    this.pcap_session = undefined
+    console.log("Stopped sniffing.")
+  },
+
+  setup_listeners: function () {
+    var self = this
+    var tcp_tracker = new pcap.TCP_tracker()
+
+    // listen for packets, decode them, and feed TCP to the tracker
+    self.pcap_session.on('packet', function (raw_packet) {
+      var packet = pcap.decode.packet(raw_packet)
+      self.note_packet(packet)
+      tcp_tracker.track_packet(packet)
+    })
+
+    tcp_tracker.on("start", function (session) {
+      self.note_session(session, 'tcp-start')
+    })
+
+    tcp_tracker.on("retransmit", function (session, direction, seqno) {
+      self.note_session(session, 'tcp-retransmit', 
+        {'direction': direction, 'seqno': seqno}
+      )
+    })
+
+    tcp_tracker.on("end", function (session) {
+      self.note_session(session, 'tcp-end')
+    })
+
+    tcp_tracker.on("reset", function (session) {
+      // Right now, it's only from dst.
+      self.note_session(session, 'tcp-reset')
+    })
+
+    tcp_tracker.on("syn retry", function (session) {
+      self.note_session(session, 'tcp-retry')
+    })
+
+    tcp_tracker.on('http error', function (session, direction, error) {
+      console.log(" HTTP parser error: " + error)
+      // TODO - probably need to force this transaction to be over at this point
+    })
+
+    tcp_tracker.on('http request', function (session, http) {
+      self.note_session(session, 'http-req-start', http.request)
+    })
+
+    tcp_tracker.on('http request body', function (session, http, data) {
+      self.note_session(session, 'http-req-data', {'http': http, 'data': data.length})
+    })
+
+    tcp_tracker.on('http request complete', function (session, http) {
+      self.note_session(session, 'http-req-end', http)
+    })
+
+    tcp_tracker.on('http response', function (session, http) {
+      self.note_session(session, 'http-res-start', http.response)
+    })
+
+    tcp_tracker.on('http response body', function (session, http, data) {
+      self.note_session(session, 'http-res-data', data.length)
+    })
+
+    tcp_tracker.on('http response complete', function (session, http) {
+      self.note_session(session, 'http-res-end', http)
+    })
+
+  },
 
   note_session: function (session, what, details) {
     if (session.dst.split(":")[1] == 80) {
@@ -61,99 +152,16 @@ var htracr = {
   
 }
 
-function start_capture_session() {
-  f = "tcp port 80";
-  b = 10
-  pcap_session = pcap.createSession('', f, (b * 1024 * 1024));
-  console.log("Listening on " + pcap_session.device_name);
-}
 
 
-function start_drop_watcher() {
-  // Check for pcap dropped packets on an interval
-  setInterval(function () {
-    var stats = pcap_session.stats();
-    if (stats.ps_drop > 0) {
-      console.log(
-        "pcap dropped packets, need larger buffer or less work to do: " + util.inspect(stats));
-    }
-  }, 2000);
-}
 
-function setup_listeners() {
-  var tcp_tracker = new pcap.TCP_tracker();htracr.note_
-
-  // listen for packets, decode them, and feed TCP to the tracker
-  pcap_session.on('packet', function (raw_packet) {
-    var packet = pcap.decode.packet(raw_packet);
-    htracr.note_packet(packet);
-    tcp_tracker.track_packet(packet);
-  });
-
-  tcp_tracker.on("start", function (session) {
-    htracr.note_session(session, 'tcp-start')
-  });
-
-  tcp_tracker.on("retransmit", function (session, direction, seqno) {
-    htracr.note_session(session, 'tcp-retransmit', 
-      {'direction': direction, 'seqno': seqno}
-    )
-  });
-
-  tcp_tracker.on("end", function (session) {
-    htracr.note_session(session, 'tcp-end')
-  });
-
-  tcp_tracker.on("reset", function (session) {
-    // Right now, it's only from dst.
-    htracr.note_session(session, 'tcp-reset')
-  });
-
-  tcp_tracker.on("syn retry", function (session) {
-    htracr.note_session(session, 'tcp-retry')
-  });
-
-  tcp_tracker.on('http error', function (session, direction, error) {
-    console.log(" HTTP parser error: " + error);
-    // TODO - probably need to force this transaction to be over at this point
-  });
-
-  tcp_tracker.on('http request', function (session, http) {
-    htracr.note_session(session, 'http-req-start', http.request)
-  });
-
-  tcp_tracker.on('http request body', function (session, http, data) {
-    htracr.note_session(session, 'http-req-data', {'http': http, 'data': data.length})
-  });
-
-  tcp_tracker.on('http request complete', function (session, http) {
-    htracr.note_session(session, 'http-req-end', http)
-  });
-
-  tcp_tracker.on('http response', function (session, http) {
-    htracr.note_session(session, 'http-res-start', http.response)
-  });
-
-  tcp_tracker.on('http response body', function (session, http, data) {
-    htracr.note_session(session, 'http-res-data', data.length)
-  });
-
-  tcp_tracker.on('http response complete', function (session, http) {
-    htracr.note_session(session, 'http-res-end', http)
-  });
-
-}
 
 
 // port to listen to 
-var port = parseInt(argv._[0]);
+var port = parseInt(argv._[0])
 if (! port || port == NaN) {
-  console.log("Usage: test-browser.js listen-port [state-file]");
-  process.exit(1);
+  console.log("Usage: test-browser.js listen-port [state-file]")
+  process.exit(1)
 }
 
-// main
-start_capture_session();
-start_drop_watcher();
-setup_listeners();
-server.start(port, htracr);
+server.start(port, htracr)

@@ -68,6 +68,8 @@
 <body>
 
 <div id="control">
+  <input type="submit" value="start" onclick="return start_capture();">
+  <input type="submit" value="stop" onclick="return stop_capture();">
   <input type="submit" value="update" onclick="return update_state();">
   <input type="submit" value="clear" onclick="return clear_state();">
   <input type="text" onchange="zoom(this.value)">
@@ -342,6 +344,32 @@ var htracr = {
 }
 
 
+function start_capture() {
+	console.log('starting capture...');
+	var req = get_req();
+	req.onreadystatechange = function () {
+		if (req.readyState == 4) {
+			console.log('started.');
+		}; 
+	};
+	req.open("POST", "/start", true);
+	req.send("");
+	return false;	
+}
+
+function stop_capture() {
+	console.log('stopping capture...');
+	var req = get_req();
+	req.onreadystatechange = function () {
+		if (req.readyState == 4) {
+			update_state();
+			console.log('stopped.');
+		}; 
+	};
+	req.open("POST", "/stop", true);
+	req.send("");
+	return false;	
+}
 
 function update_state() {
 	console.log('updating...');

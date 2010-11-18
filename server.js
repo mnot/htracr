@@ -23,6 +23,16 @@ function req_done(request, response, htracr) {
   path_segs.shift();
   var seg = path_segs.shift();
   switch (seg) {
+    case 'start':
+      htracr.start_capture()
+      response.writeHead(200, {})
+      response.end()
+      break;
+    case 'stop':
+      htracr.stop_capture()
+      response.writeHead(200, {})
+      response.end()
+      break;
     case 'conns':
       response.writeHead(200, {
         'Content-Type': 'application/json'
