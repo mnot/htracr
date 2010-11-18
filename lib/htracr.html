@@ -263,7 +263,7 @@ var htracr = {
 	},
 
 	show_packet: function(details) {
-		return details.data;
+		return "<pre>" + details.data + "</pre>";
 	},
 
 	draw_http_message: function(msg_type, y, start, end, details) {

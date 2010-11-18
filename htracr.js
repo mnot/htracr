@@ -14,6 +14,7 @@ var htracr = {
 
   start_capture: function() {
     var self = this
+    self.clear()
     var f = "tcp port 80"
     var b = 10
     self.pcap_session = pcap.createSession('', f, (b * 1024 * 1024))
@@ -37,6 +38,11 @@ var htracr = {
     this.pcap_session.close()
     this.pcap_session = undefined
     console.log("Stopped sniffing.")
+  },
+
+  clear: function () {
+    var self = this
+    self.conns = {}
   },
 
   setup_listeners: function () {
