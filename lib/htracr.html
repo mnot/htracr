@@ -109,11 +109,10 @@ var w = 2400;
 var h = 5000;
 var margin = [10, 150, 10, 10];
 var server_padding = 40;
-var conn_pad = 24;
-var conn_w = 16;
-var http_w = conn_w / 2;
-var http_c = http_w / 2;
-var pix_per_sec = 200;
+var conn_pad = 24; // padding between connections
+var conn_w = 10;  // how wide the connection is
+var http_w = 6;  // how wide http request and response messages are
+var pix_per_sec = 200;  // pixels per second
 var first;
 
 
@@ -144,7 +143,7 @@ var htracr = {
 			for (connection in s) {
 				y += conn_pad;
 				var c = s[connection];
-				self.draw_connection(c, y);
+				self.process_conn(c, y);
 			}
 			y += conn_pad;
 			// line between severs
@@ -155,13 +154,14 @@ var htracr = {
 //			});
 			y += server_padding;
 		};
-		self.draw_refs();
+//		self.draw_refs();
 	},
 
-	draw_connection: function (conn, y) {
+	process_conn: function (conn, y) {
 		var self = this;
 		var conn_start = margin[3];
 		var conn_end = w - margin[1];
+		var packets = [];
 		var http_reqs = [];
 		var http_ress = [];
 
@@ -174,7 +174,7 @@ var htracr = {
 			switch (item.what) {
 				case "packet-in":
 				case "packet-out":
-					self.draw_packet(item, y);
+					packets.push(item);
 					break;
 				case "tcp-start":
 					conn_start = self.time_x(item.time);
@@ -199,14 +199,12 @@ var htracr = {
 					break;
 			}
 		});
-		self.paper.line(
-			[conn_start, y], [conn_end, y]
-		).attr({
-			"stroke": "#ccc",
-			"stroke-width": conn_w,
-			"opacity": ".6",
+
+	  self.draw_conn(conn_start, conn_end, y);
+		packets.forEach(function(i) {
+			self.draw_packet(i, y);
 		});
-		
+				
 		function show_hdrs(hdrs) {
 				var l = [];
 				for (h in hdrs) {
@@ -217,70 +215,67 @@ var htracr = {
 		}
 		
 		http_reqs.forEach(function(req) {
-			var my_x = req[0];
-			var my_y = y - http_w;
-			var req_e = self.paper.rect(
-				my_x, 
-				my_y,
-				self.show(req[1] - req[0]),
-				http_w 
-			).attr({
-				"stroke": "none",
-				"fill": "green",
-				"opacity": .6,
-			});
-			self.hover(req_e, 
+			self.draw_http_message('req', y, req[0], req[1],
 				req[2].method + " " + req[2].url + " HTTP/" + req[2].http_version + 
 				"<br>" + show_hdrs(req[2].headers)
 			);
-			req_e.hover(function(event){
-				var top = [req[2].method + " " + req[2].url] + " HTTP/" + req[2].http_version + "<br>";
-				var hdrs = show_hdrs(req[2].headers);
-				self.msg.innerHTML = top + hdrs;
-			}, function(event) {
-				self.msg.innerHTML = "";
-			});
 
 			var url = "http://" + req[2].headers.Host + req[2].url;
-			self.urls[url] = [my_x, my_y];
+			self.urls[url] = [req[0], y];
 
 			var ref = req[2].headers.Referer;
 			if (ref) {
-				(self.refs[ref] = self.refs[ref] || []).push([my_x, my_y]);
+				(self.refs[ref] = self.refs[ref] || []).push([req[0], y]);
 			}	
 		});
 
 		http_ress.forEach(function(res) {
-			var my_x = res[0];
-			var my_y = y;
-			res_e = self.paper.rect(
-				my_x, 
-				my_y,
-				self.show(res[1] - res[0]),
-				http_w
-			).attr({
-				"stroke": "none",
-				"fill": "blue",
-				"opacity": .6,
-			})
-			self.hover(res_e, 
+			self.draw_http_message('res', y, res[0], res[1],
 				"HTTP/" + res[2].http_version + " " + res[2].status_code + "<br>" +
 				show_hdrs(res[2].headers)
 			);
 		});
 	},
 
+  draw_conn: function(conn_start, conn_end, y) {
+		var self = this;
+		self.paper.line(
+			[conn_start, y], [conn_end, y]
+		).attr({
+			"stroke": "#ddd",
+			"stroke-width": conn_w,
+		});
+  },
+
 	draw_packet: function(item, y) {
 		var self = this;
-		var e = self.paper.rect(
-			self.time_x(item.time),
-			item.what == 'packet-out' ? y : y - (conn_w / 2), 
-			2,
-			conn_w / 2
+		var my_x = self.time_x(item.time);
+		var pkt_e = self.paper.line(
+			[my_x, y],
+			[my_x, item.what == 'packet-in' ? y + (conn_w / 2) : y - (conn_w / 2)]
 		).attr({
-			'fill': item.what == 'packet-out' ? 'blue' : 'green', 
-			"stroke": "none"
+			"stroke-width": "1",
+			"stroke": "black",
 		});
+		self.hover(pkt_e, self.show_packet(item.details));		
+	},
+
+	show_packet: function(details) {
+		return details.data;
+	},
+
+	draw_http_message: function(msg_type, y, start, end, details) {
+			var msg_e = self.paper.rect(
+				start, 
+				y + ( msg_type == 'req' ? -(conn_w / 2) - http_w : (conn_w / 2) ),
+				self.show(end - start),
+				http_w
+			).attr({
+				"stroke": "none",
+				"fill": "red",
+				"opacity": .6,
+			});
+			self.hover(msg_e, details);		
 	},
 
 	hover: function(e, html) {

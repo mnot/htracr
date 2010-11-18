@@ -35,7 +35,13 @@ var htracr = {
       var local_port = packet.link.ip.tcp.dport
       what = "packet-in"
     }
-//    detail = packet
+    if (packet.link.ip.tcp.data) {
+      detail = {
+        data: packet.link.ip.tcp.data.toString('utf8'),
+        ws: packet.link.ip.tcp.window_size,
+        flags: packet.link.ip.tcp.flags,        
+      }
+    }
     this.note(server, local_port, packet.pcap_header.time_ms, what, detail)
   },
 
