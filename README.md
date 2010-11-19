@@ -20,11 +20,11 @@
 - show compression
 - content types?
 - timings
+- connection: close
+- conditional requests
 
 ### Bugs / Misc.
 
-- Draw http messages that don't terminate properly (because they're
-  cut off by stop)
 - proper display of packet / http body content
 - proper zoom control
 - layering, ability to turn on / off
@@ -32,3 +32,8 @@
 - make server identity visible even when scrolled / zoomed
 - configurable sniff port(s)
 - need HTTP status phrase
+- dump / load pcap sessions
+- keyboard controls
+- allow removing connections / servers
+- missing requests in firefox
+- #msg loses resizable after running

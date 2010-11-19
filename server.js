@@ -27,18 +27,18 @@ function req_done(request, response, htracr) {
   switch (seg) {
     case 'start':
       htracr.start_capture()
-      response.writeHead(200, {})
+      response.writeHead(200, {'content-type': 'text/plain'})
       response.end()
       break
     case 'stop':
       htracr.stop_capture()
-      response.writeHead(200, {})
+      response.writeHead(200, {'content-type': 'text/plain'})
       response.end()
       break
     case 'clear':
       // FIXME: check method
       htracr.clear()
-      response.writeHead(200, {})
+      response.writeHead(200, {'content-type': 'text/plain'})
       response.end()
       break
     case 'conns':
@@ -50,7 +50,7 @@ function req_done(request, response, htracr) {
       break
     case 'stop':
       // FIXME: check method
-      response.writeHead(200, {})
+      response.writeHead(204, {'content-type': 'text/plain'})
       response.end()
       break
     default:
