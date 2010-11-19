@@ -14,6 +14,7 @@ var static = {
   'jquery-ui': load('jquery-ui-min.js', 'application/javascript'),
   'jquery-ui-style': load('jquery-ui.css', 'text/css'),
   'htracr-style': load('htracr.css', 'text/css'),
+  'htracr-client': load('htracr-client.js', "applicatin/javascript"),
   'zoom': load('zoom.js', 'application/javascript'),
   '': load('htracr.html', 'text/html'),
 }
