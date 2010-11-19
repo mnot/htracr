@@ -5,7 +5,7 @@ body {
 }
 #msg {
 	position: fixed;
-	top: 10px;
+	bottom: 20px;
 	right: 30px;
 	width: 550px;
 	height: 250px;
@@ -23,11 +23,11 @@ pre {
 	font-size: 0.85em;
 }
 #paper {
-	margin-top: 150px;
+	margin-top: 50px;
 }
 #control {
 	position: fixed;	
-	top: 10px;	
+	bottom: 20px;	
 	left: 20px;
 }
 .on {
