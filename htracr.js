@@ -11,6 +11,7 @@ var argv = require('./lib/optimist').argv
 var htracr = {
   conns: {},
   pcap_session: undefined,
+  drop_watcher: undefined,
 
   start_capture: function() {
     var self = this
@@ -22,7 +23,7 @@ var htracr = {
     console.log("Sniffing on " + self.pcap_session.device_name)
     
     // Check for pcap dropped packets on an interval
-    setInterval(function () {
+    self.drop_watcher = setInterval(function () {
       var stats = self.pcap_session.stats()
       if (stats.ps_drop > 0) {
         console.log(
@@ -35,14 +36,37 @@ var htracr = {
   
   stop_capture: function () {
     var self = this
-    this.pcap_session.close()
-    this.pcap_session = undefined
-    console.log("Stopped sniffing.")
+    if (self.pcap_session == undefined)
+      return
+    clearInterval(self.drop_watcher)
+    self.pcap_session.close()
+    self.pcap_session = undefined
+    console.log("Stopped sniffing")
   },
 
   clear: function () {
     var self = this
     self.conns = {}
+  },
+
+  get_conns: function () {
+    var self = this
+    var o = {}
+    for (server in self.conns) {
+      for (conn in self.conns[server]) {
+        item_loop:
+        for (var i = 0; i < self.conns[server][conn].length; i++) {
+          var item = self.conns[server][conn][i]
+          if (item.what == 'http-req-start') {
+            if (o[server] == undefined)
+              o[server] = {}
+            o[server][conn] = self.conns[server][conn]
+            break item_loop
+          }
+        }
+      }
+    }
+    return o
   },
 
   setup_listeners: function () {
@@ -132,12 +156,12 @@ var htracr = {
       var local_port = packet.link.ip.tcp.dport
       what = "packet-in"
     }
-    if (packet.link.ip.tcp.data) {
-      detail = {
-        data: packet.link.ip.tcp.data.toString('utf8'),
-        ws: packet.link.ip.tcp.window_size,
-        flags: packet.link.ip.tcp.flags,        
-      }
+    detail = {
+      ws: packet.link.ip.tcp.window_size,
+      flags: packet.link.ip.tcp.flags,
+      options: packet.link.ip.tcp.options,
+      data: (packet.link.ip.tcp.data || "").toString('utf8'),
+      data_bytes: packet.link.ip.tcp.data_bytes,
     }
     this.note(server, local_port, packet.pcap_header.time_ms, what, detail)
   },
@@ -157,10 +181,6 @@ var htracr = {
   },
   
 }
-
-
-
-
 
 
 // port to listen to 

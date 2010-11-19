@@ -13,6 +13,7 @@ var static = {
   'jquery': load('jquery-min.js', 'application/javascript'),
   'jquery-ui': load('jquery-ui-min.js', 'application/javascript'),
   'jquery-ui-style': load('jquery-ui.css', 'text/css'),
+  'htracr-style': load('htracr.css', 'text/css'),
   'zoom': load('zoom.js', 'application/javascript'),
   '': load('htracr.html', 'text/html'),
 }
@@ -43,7 +44,8 @@ function req_done(request, response, htracr) {
       response.writeHead(200, {
         'Content-Type': 'application/json'
       })
-      response.end(JSON.stringify(htracr.conns))
+      var conns = htracr.get_conns()
+      response.end(JSON.stringify(conns))
       break
     case 'stop':
       // FIXME: check method
