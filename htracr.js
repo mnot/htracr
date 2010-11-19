@@ -51,6 +51,7 @@ var htracr = {
 
   get_conns: function () {
     var self = this
+    var got_something = false;
     var o = {}
     for (server in self.conns) {
       for (conn in self.conns[server]) {
@@ -58,15 +59,21 @@ var htracr = {
         for (var i = 0; i < self.conns[server][conn].length; i++) {
           var item = self.conns[server][conn][i]
           if (item.what == 'http-req-start') {
-            if (o[server] == undefined)
-              o[server] = {}
+            if (o[server] == undefined) {
+              got_something = true
+              o[server] = {}              
+            }
             o[server][conn] = self.conns[server][conn]
             break item_loop
           }
         }
       }
     }
-    return o
+    if (! got_something) {
+      return null
+    } else {
+      return o
+    }
   },
 
   setup_listeners: function () {

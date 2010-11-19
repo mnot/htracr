@@ -2,6 +2,8 @@ body {
   font-family: Arial, Helvetica, sans-serif;;
 	background-color: #201c20;
 	color: white;
+	margin: 0;
+	padding: 0;
 }
 #msg {
 	position: fixed;
@@ -23,7 +25,7 @@ pre {
 	font-size: 0.85em;
 }
 #paper {
-	margin-top: 50px;
+  margin: 0;
 }
 #control {
 	position: fixed;	

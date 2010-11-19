@@ -14,7 +14,7 @@ var static = {
   'jquery-ui': load('jquery-ui-min.js', 'application/javascript'),
   'jquery-ui-style': load('jquery-ui.css', 'text/css'),
   'htracr-style': load('htracr.css', 'text/css'),
-  'htracr-client': load('htracr-client.js', "applicatin/javascript"),
+  'htracr-client': load('htracr-client.js', "application/javascript"),
   'zoom': load('zoom.js', 'application/javascript'),
   '': load('htracr.html', 'text/html'),
 }
@@ -42,11 +42,18 @@ function req_done(request, response, htracr) {
       response.end()
       break
     case 'conns':
-      response.writeHead(200, {
-        'Content-Type': 'application/json'
-      })
       var conns = htracr.get_conns()
-      response.end(JSON.stringify(conns))
+      if (conns != null) {
+        response.writeHead(200, {
+          'Content-Type': 'application/json'
+        })
+        response.end(JSON.stringify(conns))
+      } else {
+        response.writeHead(204, {
+          'Content-Type': 'text/plain'
+        })
+        response.end()
+      }
       break
     case 'stop':
       // FIXME: check method
