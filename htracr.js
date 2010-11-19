@@ -161,7 +161,7 @@ var htracr = {
       flags: packet.link.ip.tcp.flags,
       options: packet.link.ip.tcp.options,
       data: (packet.link.ip.tcp.data || "").toString('utf8'),
-      data_bytes: packet.link.ip.tcp.data_bytes,
+      data_sz: packet.link.ip.tcp.data_bytes,
     }
     this.note(server, local_port, packet.pcap_header.time_ms, what, detail)
   },
