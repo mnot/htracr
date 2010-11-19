@@ -37,3 +37,5 @@
 - allow removing connections / servers
 - missing requests in firefox
 - #msg loses resizable after running
+- printing
+- show all?
