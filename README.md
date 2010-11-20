@@ -16,12 +16,12 @@ To install htracr, you'll need:
 
 To use htracr, start it up like this:
 
-  > ./htracr [listen-port]
+  > ./htracr.js [listen-port]
 
 where _listen_port_ is the port you'd like htracr to be available on. Then,
 point your browser at it; e.g.,:
 
-  > ./htracr 8000
+  > ./htracr.js 8000
 
 means you should point at:
 
@@ -62,7 +62,7 @@ means you should point at:
 - keyboard controls
 - allow removing connections / servers
 - missing requests in firefox
-- #msg loses resizable after running
+- msg loses resizable after running
 - printing
 - show all?
 - summary stats
