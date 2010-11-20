@@ -1,5 +1,30 @@
 
+# htracr
 
+An HTTP packet sniffer + visualisation tool
+
+## Installation
+
+To install htracr, you'll need:
+- Node.JS <http://nodejs.org/>
+- node_pcap <https://github.com/mranney/node_pcap/>
+- A Web browser
+
+
+## Using htracr
+
+To use htracr, start it up like this::
+
+  ./htracr [listen-port]
+
+where _listen_port_ is the port you'd like htracr to be available on. Then,
+point your browser at it; e.g.,::
+
+  > ./htracr 8000
+
+means you should point at::
+
+  http://localhost:8000/
 
 ## TODO
 
@@ -39,3 +64,4 @@
 - #msg loses resizable after running
 - printing
 - show all?
+- summary stats
