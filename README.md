@@ -14,6 +14,10 @@ To install htracr, you'll need:
 
 ## Using htracr
 
+htracer is designed for use on the same machine your web browser or other 
+client runs on; while it's possible to run it on a server, it'll be difficult
+to make sense of all of the traffic coming to a normal server.
+
 To use htracr, start it up like this:
 
   > ./htracr.js [listen-port]
@@ -69,3 +73,4 @@ Currently, htracr only captures traffic on port 80.
 - printing
 - show all?
 - summary stats
+- DNS
