@@ -27,6 +27,9 @@ means you should point at:
 
   > http://localhost:8000/
 
+Then, press 'start' to start capturing HTTP traffic, and 'stop' to show it.
+Currently, htracr only captures traffic on port 80.
+
 ## TODO
 
 ### TCP visualisation
