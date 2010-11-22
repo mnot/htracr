@@ -15,6 +15,7 @@ var static = {
   'jquery-ui-style': load('jquery-ui.css', 'text/css'),
   'htracr-style': load('htracr.css', 'text/css'),
   'htracr-client': load('htracr-client.js', "application/javascript"),
+  'ui-icons_cccccc_256x240.png': load('ui-icons_cccccc_256x240.png', "image/png"),
   '': load('htracr.html', 'text/html'),
 }
   
@@ -74,6 +75,9 @@ function req_done(request, response, htracr) {
       response.end()
       break
     default:
+      if (seg == 'images') {
+        seg = path_segs.shift()
+      }
       if (seg in static) {
         response.writeHead(200, {
           'Content-Type': static[seg][1],
