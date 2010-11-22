@@ -9,7 +9,9 @@ var argv = require('./lib/optimist').argv
 
 
 var htracr = {
+  packets: [],
   conns: {},
+  msgs: {},
   pcap_session: undefined,
   drop_watcher: undefined,
 
@@ -46,7 +48,9 @@ var htracr = {
 
   clear: function () {
     var self = this
+    self.packets = []
     self.conns = {}
+    self.msgs = {}
   },
 
   get_conns: function () {
@@ -55,6 +59,7 @@ var htracr = {
     var o = {}
     for (server in self.conns) {
       for (conn in self.conns[server]) {
+        // weed out servers without HTTP requests in them
         item_loop:
         for (var i = 0; i < self.conns[server][conn].length; i++) {
           var item = self.conns[server][conn][i]
@@ -142,6 +147,7 @@ var htracr = {
   },
 
   note_session: function (session, what, details) {
+    var self = this;
     if (session.dst.split(":")[1] == 80) {
       var server = session.dst
       var local_port = session.src.split(":")[1]
@@ -149,11 +155,12 @@ var htracr = {
       var server = session.src
       var local_port = session.dst.split(":")[1]
     }
-    this.note(server, local_port, session.current_cap_time, what, details)
+    self.note(server, local_port, session.current_cap_time, what, details)
   },
 
   note_packet: function (packet) {
-    var detail = ''
+    var self = this;
+    var what;
     if (packet.link.ip.tcp.dport == 80) {
       var server = packet.link.ip.daddr + ":" + packet.link.ip.tcp.dport
       var local_port = packet.link.ip.tcp.sport
@@ -163,14 +170,18 @@ var htracr = {
       var local_port = packet.link.ip.tcp.dport
       what = "packet-in"
     }
-    detail = {
+    var detail = {
       ws: packet.link.ip.tcp.window_size,
       flags: packet.link.ip.tcp.flags,
       options: packet.link.ip.tcp.options,
-      data: (packet.link.ip.tcp.data || "").toString('utf8'),
       data_sz: packet.link.ip.tcp.data_bytes,
+      packet_id: self.packets.length,
     }
-    this.note(server, local_port, packet.pcap_header.time_ms, what, detail)
+    self.note(
+      server, local_port, packet.pcap_header.time_ms, what, detail
+    )
+    // FIXME - encoding
+    self.packets.push((packet.link.ip.tcp.data || "").toString('utf8'))
   },
 
   note: function (server, local_port, time, what, details) {

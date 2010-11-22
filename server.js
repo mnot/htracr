@@ -55,6 +55,20 @@ function req_done(request, response, htracr) {
         response.end()
       }
       break
+    case 'packet':
+      var packet_id = path_segs.shift()
+      if (htracr.packets[packet_id]) {
+        response.writeHead(200, {
+          'Content-Type': 'application/json'
+        })
+        response.end(JSON.stringify({data: htracr.packets[packet_id]}))
+      } else {
+        response.writeHead(404, {
+          'Content-Type': 'text/plain'
+        })
+        response.end()
+      }
+      break
     case 'stop':
       // FIXME: check method
       response.writeHead(204, {'content-type': 'text/plain'})
