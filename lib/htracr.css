@@ -35,6 +35,7 @@ pre {
 #zoom {
   width: 200px;
   font-size: 10px;
+  display: inline-block;
 }
 .on {
   background-color: #ddeedd;
