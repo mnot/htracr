@@ -32,6 +32,10 @@ pre {
 	bottom: 20px;	
 	left: 20px;
 }
+#zoom {
+  width: 200px;
+  font-size: 10px;
+}
 .on {
   background-color: #ddeedd;
   color: black;

@@ -15,7 +15,15 @@ var static = {
   'jquery-ui-style': load('jquery-ui.css', 'text/css'),
   'htracr-style': load('htracr.css', 'text/css'),
   'htracr-client': load('htracr-client.js', "application/javascript"),
-  'ui-icons_cccccc_256x240.png': load('ui-icons_cccccc_256x240.png', "image/png"),
+  'ui-icons_cccccc_256x240.png': load(
+    'ui-icons_cccccc_256x240.png', "image/png"
+  ),
+  'ui-bg_inset-soft_25_000000_1x100.png': load(
+    'ui-bg_inset-soft_25_000000_1x100.png', 'image/png'
+  ),
+  'ui-bg_glass_20_555555_1x400.png': load(
+    'ui-bg_glass_20_555555_1x400.png', 'image/png'
+  ),
   '': load('htracr.html', 'text/html'),
 }
   
