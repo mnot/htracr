@@ -60,20 +60,18 @@ The slider will adjust the time scale.
 - conditional requests
 - click on response to open window with it
 - click on request to re-make request
+- server stall time (based upon rtt)
 
 ### Bugs / Misc.
 
 - proper display of packet / http body content
-- proper zoom control
 - layering, ability to turn on / off
-- show hostname instead of IP
 - configurable sniff port(s)
 - need HTTP status phrase
 - dump / load pcap sessions
 - keyboard controls
 - allow removing connections / servers
-- missing requests in firefox
-- msg loses resizable after running
+- missing requests in firefox 3
 - printing
 - show all?
 - summary stats
