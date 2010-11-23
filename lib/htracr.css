@@ -26,17 +26,19 @@ pre {
 }
 #paper {
   margin: 0;
+  z-index: 5;
 }
 #labels {
   position: fixed;
   width: 300px;
-  margin-left: -140px;
-  left: 10%;
+  left: 10px;
+  z-index: -1;
 }
 #control {
 	position: fixed;	
 	bottom: 20px;	
 	left: 20px;
+	z-index: 10;
 }
 #zoom {
   width: 200px;
