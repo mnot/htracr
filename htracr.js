@@ -176,13 +176,10 @@ var htracr = {
     }
     if (self.server_names[server_ip] == undefined) {
       self.server_names[server_ip] = ""
-      console.log("looking up " + server_ip)
       dns.reverse(server_ip, function(err, domains) {
         if (! err) {
-          console.log("found " + domains[0] + " for " + server_ip)
           self.server_names[server_ip] = domains[0]
         } else {
-          console.log('error looking up ' + server_ip + ": " + err)          
           delete self.server_names[server_ip]
         }
       })

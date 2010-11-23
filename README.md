@@ -26,7 +26,7 @@ To use htracr, start it up like this:
   > ./htracr.js [listen-port]
 
 where _listen_port_ is the port you'd like htracr to be available on. Then,
-point your browser at it; e.g.,:
+point your browser at it; e.g.:
 
   > ./htracr.js 8000
 
@@ -61,6 +61,7 @@ The slider will adjust the time scale.
 - click on response to open window with it
 - click on request to re-make request
 - server stall time (based upon rtt)
+- count round trips
 
 ### Bugs / Misc.
 
