@@ -12,6 +12,7 @@ var htracr = {
   packets: [],
   conns: {},
   msgs: {},
+  servers: {},
   pcap_session: undefined,
   drop_watcher: undefined,
 
@@ -162,13 +163,25 @@ var htracr = {
     var self = this;
     var what;
     if (packet.link.ip.tcp.dport == 80) {
-      var server = packet.link.ip.daddr + ":" + packet.link.ip.tcp.dport
+      var server_ip = packet.link.ip.daddr
+      var server = server_ip + ":" + packet.link.ip.tcp.dport
       var local_port = packet.link.ip.tcp.sport
       what = "packet-out"
     } else {
-      var server = packet.link.ip.saddr + ":" + packet.link.ip.tcp.sport
+      var server_ip = packet.link.ip.saddr
+      var server = server_ip + ":" + packet.link.ip.tcp.sport
       var local_port = packet.link.ip.tcp.dport
       what = "packet-in"
+    }
+    if (! server_ip in self.servers) {
+      self.servers[server_ip] = ""
+      dns.reverse(server_ip, function(err, domains) {
+        if (! err) {
+          self.servers[server_ip] = domains[0]
+        } else {
+          delete self.servers[server_ip]
+        }
+      })
     }
     var detail = {
       ws: packet.link.ip.tcp.window_size,
