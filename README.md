@@ -1,7 +1,10 @@
 
 # htracr
 
-An HTTP packet sniffer + visualisation tool
+htracr is a packet sniffer and visualisation tool for HTTP. It does not give
+you a score, grade, or hold your hand when you're crying because your site
+is so damn slow, but it will give you unparalleled insight into what's 
+actually happening on the wire between your browser and the Web.
 
 ## Installation
 
@@ -33,6 +36,8 @@ means you should point at:
 
 Then, press 'start' to start capturing HTTP traffic, and 'stop' to show it.
 Currently, htracr only captures traffic on port 80.
+
+The slider will adjust the time scale.
 
 ## TODO
 
