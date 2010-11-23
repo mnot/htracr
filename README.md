@@ -42,12 +42,10 @@ Currently, htracr only captures traffic on port 80.
 - Hover / click on connection for statistics
 - tcp retransmit / congestion
 - window scaling?
+- bytes in flight?
 
 ### HTTP visualisation
 
-- Method
-- Status codes
-- Location header linking (similar to refs?) for redirects
 - Highlight requests that are split across packets
 - Highlight pipelining
 - show compression
@@ -55,6 +53,8 @@ Currently, htracr only captures traffic on port 80.
 - timings
 - connection: close
 - conditional requests
+- click on response to open window with it
+- click on request to re-make request
 
 ### Bugs / Misc.
 
