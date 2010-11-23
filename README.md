@@ -62,7 +62,6 @@ Currently, htracr only captures traffic on port 80.
 - proper zoom control
 - layering, ability to turn on / off
 - show hostname instead of IP
-- make server identity visible even when scrolled / zoomed
 - configurable sniff port(s)
 - need HTTP status phrase
 - dump / load pcap sessions
