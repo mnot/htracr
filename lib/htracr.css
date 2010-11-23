@@ -30,7 +30,6 @@ pre {
 }
 #labels {
   position: fixed;
-  width: 300px;
   left: 10px;
   z-index: -1;
 }

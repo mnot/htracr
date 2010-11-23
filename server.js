@@ -63,6 +63,11 @@ function req_done(request, response, htracr) {
         response.end()
       }
       break
+    case 'servers':
+      response.writeHead(200, {
+        'Content-Type': 'application/json'
+      })
+      response.end(JSON.stringify(htracr.server_names))
     case 'packet':
       var packet_id = path_segs.shift()
       if (htracr.packets[packet_id]) {

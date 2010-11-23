@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 
-var util = require("util")
+var argv = require('./lib/optimist').argv
+var dns = require('dns')
 var node_http = require('http')
 var node_url = require('url')
 var pcap = require("pcap")
-var server = require("./server")
-var argv = require('./lib/optimist').argv
+var server = require('./server')
+var util = require('util')
 
 
 var htracr = {
   packets: [],
   conns: {},
   msgs: {},
-  servers: {},
+  server_names: {},
   pcap_session: undefined,
   drop_watcher: undefined,
 
@@ -173,13 +174,16 @@ var htracr = {
       var local_port = packet.link.ip.tcp.dport
       what = "packet-in"
     }
-    if (! server_ip in self.servers) {
-      self.servers[server_ip] = ""
+    if (self.server_names[server_ip] == undefined) {
+      self.server_names[server_ip] = ""
+      console.log("looking up " + server_ip)
       dns.reverse(server_ip, function(err, domains) {
         if (! err) {
-          self.servers[server_ip] = domains[0]
+          console.log("found " + domains[0] + " for " + server_ip)
+          self.server_names[server_ip] = domains[0]
         } else {
-          delete self.servers[server_ip]
+          console.log('error looking up ' + server_ip + ": " + err)          
+          delete self.server_names[server_ip]
         }
       })
     }
