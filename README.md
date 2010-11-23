@@ -39,6 +39,12 @@ Currently, htracr only captures traffic on port 80.
 
 The slider will adjust the time scale.
 
+## Contact
+
+Mark Nottingham <mnot@mnot.net>
+
+http://github.com/mnot/htracr/
+
 ## TODO
 
 ### TCP visualisation
