@@ -127,11 +127,11 @@ var htracr = {
     })
 
     tcp_tracker.on('http request body', function (session, http, data) {
-      self.note_session(session, 'http-req-data', {'http': http, 'data': data.length})
+      self.note_session(session, 'http-req-data', data.length)
     })
 
     tcp_tracker.on('http request complete', function (session, http) {
-      self.note_session(session, 'http-req-end', http)
+      self.note_session(session, 'http-req-end')
     })
 
     tcp_tracker.on('http response', function (session, http) {
@@ -143,13 +143,16 @@ var htracr = {
     })
 
     tcp_tracker.on('http response complete', function (session, http) {
-      self.note_session(session, 'http-res-end', http)
+      self.note_session(session, 'http-res-end')
     })
 
   },
 
   note_session: function (session, what, details) {
     var self = this;
+    if (! details) {
+      details = {}
+    }
     if (session.dst.split(":")[1] == 80) {
       var server = session.dst
       var local_port = session.src.split(":")[1]
@@ -157,7 +160,9 @@ var htracr = {
       var server = session.src
       var local_port = session.dst.split(":")[1]
     }
-    self.note(server, local_port, session.current_cap_time, what, details)
+    details.time = session.current_cap_time
+    details.what = what
+    self.note(server, local_port, details)
   },
 
   note_packet: function (packet) {
@@ -185,31 +190,27 @@ var htracr = {
       })
     }
     var detail = {
+      time: packet.pcap_header.time_ms,
+      what: what,
       ws: packet.link.ip.tcp.window_size,
       flags: packet.link.ip.tcp.flags,
       options: packet.link.ip.tcp.options,
       data_sz: packet.link.ip.tcp.data_bytes,
       packet_id: self.packets.length,
     }
-    self.note(
-      server, local_port, packet.pcap_header.time_ms, what, detail
-    )
+    self.note(server, local_port, detail)
     // FIXME - encoding
     self.packets.push((packet.link.ip.tcp.data || "").toString('utf8'))
   },
 
-  note: function (server, local_port, time, what, details) {
+  note: function (server, local_port, details) {
     if (this.conns[server] == undefined) {
       this.conns[server] = {}
     }
     var server_conn = this.conns[server]
     if (server_conn[local_port] == undefined)
       server_conn[local_port] = []
-    server_conn[local_port].push({
-      'what': what,
-      'time': time,
-      'details': details,
-    })
+    server_conn[local_port].push(details)
   },
   
 }
