@@ -39,6 +39,14 @@ pre {
 	left: 20px;
 	z-index: 10;
 }
+#features {
+  margin-top: 6px;
+  font-size: 12px;
+}
+#features * {
+  padding: 2px;
+  margin-right: 3px;
+}
 #zoom {
   width: 200px;
   font-size: 10px;
