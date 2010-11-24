@@ -67,6 +67,7 @@ http://github.com/mnot/htracr/
   - receive window (over time?)
   - rtt over time?
 - retransmits / retries
+- show ack relationships?
 
 ### HTTP visualisation
 
