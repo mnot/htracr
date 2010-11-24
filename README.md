@@ -55,8 +55,18 @@ http://github.com/mnot/htracr/
   - half-connected
   - idle
   - disconnecting
-- Colour packets based on type (syn, ack, etc.)
-- Hover / click on connection for statistics
+- per-connection stats:
+  - ttl packets
+  - retransmits / retries
+- Colour packets based on type:
+  - default
+  - has syn
+  - has data
+  - retransmit
+  - retry
+  - has psh
+  - has rst
+  - has fin
 - tcp retransmit / congestion window
 - window scaling?
 - bytes in flight?
