@@ -63,7 +63,7 @@ http://github.com/mnot/htracr/
 
 ### HTTP visualisation
 
-- Highlight requests that are split across packets
+- Highlight requests (without bodies) that are split across packets
 - Highlight pipelining
 - show compression
 - content types?
