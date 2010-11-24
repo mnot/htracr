@@ -66,15 +66,7 @@ http://github.com/mnot/htracr/
   - congestion window (over time?)
   - receive window (over time?)
   - rtt over time?
-- Colour packets based on type:
-  - default
-  - has syn
-  - has data
-  - retransmit
-  - retry
-  - has psh
-  - has rst
-  - has fin
+- retransmits / retries
 
 ### HTTP visualisation
 
@@ -82,7 +74,7 @@ http://github.com/mnot/htracr/
 - Highlight pipelining
 - message stats
   - message delay, size
-  - # packets / round trips
+  - number of round trips
 - click on response to open window with it
 - click on request to re-make request
 - server stall time (based upon rtt)
@@ -104,6 +96,7 @@ http://github.com/mnot/htracr/
 
 ### Bugs
 
+- needs one mother of a refactoring
 - handle overflow display of packet / http body content in msg
 - need HTTP status phrase
 - missing requests in firefox 3
