@@ -62,8 +62,10 @@ http://github.com/mnot/htracr/
   - idle
   - disconnecting
 - per-connection stats:
-  - ttl packets
-  - retransmits / retries
+  - total packets (graph of types?)
+  - congestion window (over time?)
+  - receive window (over time?)
+  - rtt over time?
 - Colour packets based on type:
   - default
   - has syn
@@ -73,35 +75,35 @@ http://github.com/mnot/htracr/
   - has psh
   - has rst
   - has fin
-- tcp retransmit / congestion window
-- window scaling?
-- bytes in flight?
 
 ### HTTP visualisation
 
 - Highlight requests (without bodies) that are split across packets
 - Highlight pipelining
-- show compression
-- content types?
-- timings
-- connection: close
-- conditional requests
+- message stats
+  - message delay, size
+  - # packets / round trips
 - click on response to open window with it
 - click on request to re-make request
 - server stall time (based upon rtt)
-- count round trips
+- show compression?
+- conditional requests?
+- content types?
+- make effects of connection: close visible?
 
-### Bugs / Misc.
+
+### Misc. Features
+
+- configurable sniff port(s)
+- printing
+- trace DNS
+- per-server stats
+- allow removing connections / servers
+- keyboard controls
+- dump / load pcap sessions
+
+### Bugs
 
 - proper display of packet / http body content
-- layering, ability to turn on / off
-- configurable sniff port(s)
 - need HTTP status phrase
-- dump / load pcap sessions
-- keyboard controls
-- allow removing connections / servers
 - missing requests in firefox 3
-- printing
-- show all?
-- summary stats
-- DNS
