@@ -45,6 +45,12 @@ Mark Nottingham <mnot@mnot.net>
 
 http://github.com/mnot/htracr/
 
+
+## Obligatory Screenshot
+
+![htracr screenshot](http://mnot.github.com/htracr/htracr.png)
+
+
 ## TODO
 
 ### TCP visualisation
