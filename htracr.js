@@ -127,7 +127,7 @@ var htracr = {
     })
 
     tcp_tracker.on('http request body', function (session, http, data) {
-      self.note_session(session, 'http-req-data', data.length)
+      self.note_session(session, 'http-req-data', {length: data.length})
     })
 
     tcp_tracker.on('http request complete', function (session, http) {
@@ -139,7 +139,7 @@ var htracr = {
     })
 
     tcp_tracker.on('http response body', function (session, http, data) {
-      self.note_session(session, 'http-res-data', data.length)
+      self.note_session(session, 'http-res-data', {length: data.length})
     })
 
     tcp_tracker.on('http response complete', function (session, http) {
