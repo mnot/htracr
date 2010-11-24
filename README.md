@@ -104,6 +104,7 @@ http://github.com/mnot/htracr/
 
 ### Bugs
 
-- proper display of packet / http body content
+- handle overflow display of packet / http body content in msg
 - need HTTP status phrase
 - missing requests in firefox 3
+- connection: close isn't properly picked up (e.g., promo on citypaper.com)
