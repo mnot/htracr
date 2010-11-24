@@ -49,9 +49,15 @@ http://github.com/mnot/htracr/
 
 ### TCP visualisation
 
+- Make connection states visible:
+  - handshaking
+  - connected
+  - half-connected
+  - idle
+  - disconnecting
 - Colour packets based on type (syn, ack, etc.)
 - Hover / click on connection for statistics
-- tcp retransmit / congestion
+- tcp retransmit / congestion window
 - window scaling?
 - bytes in flight?
 
