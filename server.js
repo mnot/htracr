@@ -76,7 +76,7 @@ function req_done(request, response, htracr) {
         })
         response.end(JSON.stringify({data: htracr.packets[packet_id]}))
       } else {
-        response.writeHead(404, {
+        response.writeHead(204, {
           'Content-Type': 'text/plain'
         })
         response.end()
