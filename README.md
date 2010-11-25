@@ -75,7 +75,7 @@ http://github.com/mnot/htracr/
 - Highlight message headers that are split across packets
 - Highlight pipelining
 - message stats
-  - message delay, size
+  - message delay
   - number of round trips
 - click on response to open window with it
 - click on request to re-make request
