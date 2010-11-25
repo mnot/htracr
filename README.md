@@ -101,3 +101,4 @@ http://github.com/mnot/htracr/
 - some requests not drawn in firefox 3
 - connection: close on requests - do we get a http-res-end?
 - pipelining
+- improve RTT calculation
