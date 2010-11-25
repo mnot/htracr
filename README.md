@@ -95,8 +95,8 @@ http://github.com/mnot/htracr/
 ### Bugs
 
 - needs one mother of a refactoring
-- handle overflow display of packet / http body content in msg
 - header names are case-sensitive here
+- prettify packet display
 - need HTTP status phrase
 - some requests not drawn in firefox 3
 - connection: close on requests - do we get a http-res-end?

@@ -10,6 +10,7 @@ function load(name, media_type) {
 }
 var static = {
   'raphael': load('raphael-min.js', 'application/javascript'),
+  'g.raphael': load('g.raphael-min.js', 'application/javascript'),
   'jquery': load('jquery-min.js', 'application/javascript'),
   'jquery-ui': load('jquery-ui-min.js', 'application/javascript'),
   'jquery-ui-style': load('jquery-ui.css', 'text/css'),
@@ -23,6 +24,12 @@ var static = {
   ),
   'ui-bg_glass_20_555555_1x400.png': load(
     'ui-bg_glass_20_555555_1x400.png', 'image/png'
+  ),
+  'ui-bg_glass_40_0078a3_1x400.png': load(
+    'ui-bg_glass_40_0078a3_1x400.png', 'image/png'
+  ),
+  'ui-bg_inset-soft_30_f58400_1x100.png': load(
+    'ui-bg_inset-soft_30_f58400_1x100.png', 'image/png'
   ),
   '': load('htracr.html', 'text/html'),
 }
