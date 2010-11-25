@@ -61,6 +61,7 @@ http://github.com/mnot/htracr/
   - half-connected
   - idle
   - disconnecting
+  - buffer-full?
 - per-connection stats:
   - total packets (graph of types?)
   - congestion window (over time?)
@@ -71,19 +72,15 @@ http://github.com/mnot/htracr/
 
 ### HTTP visualisation
 
-- Highlight requests (without bodies) that are split across packets
+- Highlight message headers that are split across packets
 - Highlight pipelining
 - message stats
   - message delay, size
   - number of round trips
 - click on response to open window with it
 - click on request to re-make request
-- server stall time (based upon rtt)
-- show compression?
-- conditional requests?
-- content types?
-- make effects of connection: close visible?
-
+- server stall time (based upon rtt / packet sizes / psh)
+- content types - message colours?
 
 ### Misc. Features
 
@@ -99,6 +96,8 @@ http://github.com/mnot/htracr/
 
 - needs one mother of a refactoring
 - handle overflow display of packet / http body content in msg
+- header names are case-sensitive here
 - need HTTP status phrase
-- missing requests in firefox 3
-- connection: close isn't properly picked up (e.g., promo on citypaper.com)
+- some requests not drawn in firefox 3
+- connection: close on requests - do we get a http-res-end?
+- pipelining
