@@ -67,7 +67,7 @@ http://github.com/mnot/htracr/
   - congestion window (over time?)
   - receive window (over time?)
   - rtt over time?
-- handle tcp-retransmit / tcp-retry
+- handle tcp-retransmit / tcp-reset
 - show ack relationships?
 
 ### HTTP visualisation
@@ -91,6 +91,7 @@ http://github.com/mnot/htracr/
 - allow removing connections / servers
 - keyboard controls
 - dump / load pcap sessions
+- magnifier, because packets get lost between the pixels
 
 ### Bugs
 
@@ -102,3 +103,4 @@ http://github.com/mnot/htracr/
 - connection: close on requests - do we get a http-res-end?
 - pipelining
 - improve RTT calculation
+- keep centre on zoom
