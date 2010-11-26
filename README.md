@@ -12,7 +12,7 @@ To install htracr, you'll need:
 
 - Node.JS <http://nodejs.org/>
 - node_pcap <https://github.com/mranney/node_pcap/>
-- A Web browser
+- A modern Web browser (Known to work: Safari 5, FF 4, Chrome)
 
 
 ## Using htracr
