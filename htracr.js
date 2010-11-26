@@ -16,13 +16,14 @@ var htracr = {
   server_names: {},
   pcap_session: undefined,
   drop_watcher: undefined,
+  device: '',
 
   start_capture: function() {
     var self = this
     self.clear()
     var f = "tcp port 80"
     var b = 10
-    self.pcap_session = pcap.createSession('', f, (b * 1024 * 1024))
+    self.pcap_session = pcap.createSession(self.device, f, (b * 1024 * 1024))
     this.setup_listeners()
     console.log("Sniffing on " + self.pcap_session.device_name)
     
@@ -220,8 +221,14 @@ var htracr = {
 // port to listen to 
 var port = parseInt(argv._[0])
 if (! port || port == NaN) {
-  console.log("Usage: test-browser.js listen-port [state-file]")
+  console.log("Usage: test-browser.js listen-port [device] [state-file]")
   process.exit(1)
+}
+
+// device to snoop on
+var device = argv._[1]
+if (device) {
+  htracr.device = device
 }
 
 server.start(port, htracr)
