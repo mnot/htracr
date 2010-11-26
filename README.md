@@ -67,7 +67,7 @@ http://github.com/mnot/htracr/
   - congestion window (over time?)
   - receive window (over time?)
   - rtt over time?
-- retransmits / retries
+- handle tcp-retransmit / tcp-retry
 - show ack relationships?
 
 ### HTTP visualisation
