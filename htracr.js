@@ -90,6 +90,7 @@ var htracr = {
     // listen for packets, decode them, and feed TCP to the tracker
     self.pcap_session.on('packet', function (raw_packet) {
       var packet = pcap.decode.packet(raw_packet)
+      // NOTE: ordering is important here!
       self.note_packet(packet)
       tcp_tracker.track_packet(packet)
     })
