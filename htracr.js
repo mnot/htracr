@@ -221,7 +221,7 @@ var htracr = {
 // port to listen to 
 var port = parseInt(argv._[0])
 if (! port || port == NaN) {
-  console.log("Usage: test-browser.js listen-port [device] [state-file]")
+  console.log("Usage: test-browser.js listen-port [device]")
   process.exit(1)
 }
 
