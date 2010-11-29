@@ -41,7 +41,13 @@ function req_done(request, response, htracr) {
   var seg = path_segs.shift()
   switch (seg) {
     case 'start':
-      htracr.start_capture()
+      try {
+        htracr.start_capture()
+      } catch (e) {
+        response.writeHead(500, {'content-type': 'text/plain'})
+        response.end(e.description)
+        return
+      }
       response.writeHead(200, {'content-type': 'text/plain'})
       response.end()
       break
