@@ -218,14 +218,14 @@ var htracr = {
 }
 
 // port to listen to 
-var port = parseInt(argv._[2])
+var port = parseInt(argv._[0])
 if (! port || port == NaN) {
   console.log("Usage: test-browser.js listen-port [device]")
   process.exit(1)
 }
 
 // device to snoop on
-var device = argv._[3]
+var device = argv._[1]
 if (device) {
   htracr.device = device
 }
