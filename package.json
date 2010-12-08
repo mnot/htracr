@@ -1,0 +1,29 @@
+{ "name" : "htracr"
+, "description" : "HTTP sniffing and low-level visualisation"
+, "keywords" : [ "sniffer", "HTTP", "trace" ]
+, "version" : "0.1.0"
+, "homepage" : "https://github.com/mnot/htracr"
+, "author" : "Mark Nottingham <mnot@mnot.net> (http://www.mnot.net/)"
+, "contributors" :
+  [ "zomo (http://www.zomo.co.uk)"
+  ]
+, "repository" :
+  { "type" : "git"
+  , "url" : "http://github.com/mnot/htracr.git"
+  }
+, "bugs" :
+  { "web" : "http://github.com/mnot/htracr/issues"
+  }
+, "directories" : { "lib" : "./lib" }
+, "bin" : { "htracr" : "./htracr.js" }
+, "engines" : { "node" : ">=0.2.3" }
+, "dependencies" : 
+  { "pcap" : ">0.2.5",
+		"optimist" : ">0.1.0"
+  }
+, "licenses" :
+  [ { "type" : "MIT"
+    , "url" : "http://github.com/mnot/htracr/raw/master/LICENSE"
+    }
+  ]
+}
