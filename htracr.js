@@ -217,7 +217,6 @@ var htracr = {
   
 }
 
-console.log(argv._)
 // port to listen to 
 var port = parseInt(argv._[2])
 if (! port || port == NaN) {
