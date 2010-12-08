@@ -8,11 +8,20 @@ actually happening on the wire between your browser and the Web.
 
 ## Installation
 
-To install htracr, you'll need:
+htracr can be installed with npm like this:
+
+  > npm install htracr
+
+which will install dependencies automatically. See <http://npmjs.org/> for 
+more information about npm.
+
+Under the covers, htracr relies upon:
 
 - Node.JS <http://nodejs.org/>
 - node_pcap <https://github.com/mranney/node_pcap/>
-- A modern Web browser (Known to work: Safari 5, FF 4, Chrome)
+- node-optimist <https://github.com/substack/node-optimist>
+
+You'll also need a modern Web browser (known to work: Safari 5, FF 4, Chrome)
 
 
 ## Using htracr
@@ -23,12 +32,12 @@ to make sense of all of the traffic coming to a normal server.
 
 To use htracr, start it up like this:
 
-  > ./htracr.js [listen-port]
+  > htracr [listen-port]
 
 where _listen_port_ is the port you'd like htracr to be available on. Then,
 point your browser at it; e.g.:
 
-  > ./htracr.js 8000
+  > htracr 8000
 
 means you should point at:
 
@@ -84,7 +93,7 @@ http://github.com/mnot/htracr/
 
 ### Misc. Features
 
-- configurable sniff port(s)
+- configurable sniff port(s) in-browser
 - printing
 - trace DNS
 - per-server stats
