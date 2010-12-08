@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-var argv = require('./lib/optimist').argv
+var argv = require('optimist').argv
 var dns = require('dns')
 var node_http = require('http')
 var node_url = require('url')
 var pcap = require("pcap")
-var server = require('./server')
+var server = require('htracr/server')
 var util = require('util')
 
 
@@ -217,16 +217,16 @@ var htracr = {
   
 }
 
-
+console.log(argv._)
 // port to listen to 
-var port = parseInt(argv._[0])
+var port = parseInt(argv._[2])
 if (! port || port == NaN) {
   console.log("Usage: test-browser.js listen-port [device]")
   process.exit(1)
 }
 
 // device to snoop on
-var device = argv._[1]
+var device = argv._[3]
 if (device) {
   htracr.device = device
 }
