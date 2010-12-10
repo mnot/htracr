@@ -43,10 +43,21 @@ means you should point at:
 
   > http://localhost:8000/
 
+On some operating systems, you may need to specify the interface to listen
+on. For example:
+
+  > htracr 8000 eth0
+  
+and in some cases, you may need permission to listen to the device, making 
+the appopriate command line something like:
+
+  > sudo htracr 8000 eth0
+
 Then, press 'start' to start capturing HTTP traffic, and 'stop' to show it.
 Currently, htracr only captures traffic on port 80.
 
 The slider will adjust the time scale.
+
 
 ## Contact
 

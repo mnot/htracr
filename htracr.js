@@ -215,13 +215,16 @@ var htracr = {
     server_conn[local_port].push(details)
   },
   
+  usage: function () {
+    console.log("Usage: htracr listen-port [device]")
+    process.exit(1)
+  }
 }
 
 // port to listen to 
 var port = parseInt(argv._[0])
 if (! port || port == NaN) {
-  console.log("Usage: test-browser.js listen-port [device]")
-  process.exit(1)
+  htracr.usage()
 }
 
 // device to snoop on
