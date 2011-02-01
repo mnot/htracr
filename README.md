@@ -6,22 +6,26 @@ you a score, grade, or hold your hand when you're crying because your site
 is so damn slow, but it will give you unparalleled insight into what's 
 actually happening on the wire between your browser and the Web.
 
-## Installation
 
-htracr can be installed with npm like this:
+## Installing htracr
+
+First you'll need Node <http://nodejs.org> and its package manager, npm
+<http://npmjs.org>. You'll also need a modern Web browser (known to work: 
+Safari 5, FireFox 4, and Chrome).
+
+Then, htracr can be installed with npm like this:
 
   > npm install htracr
 
 which will install dependencies automatically. See <http://npmjs.org/> for 
 more information about npm.
 
-Under the covers, htracr relies upon:
+See 'Installation Problems?' below if you have any issues getting htracr
+onto your system.
 
-- Node.JS <http://nodejs.org/>
-- node_pcap <https://github.com/mranney/node_pcap/>
-- node-optimist <https://github.com/substack/node-optimist>
-
-You'll also need a modern Web browser (known to work: Safari 5, FF 4, Chrome)
+Under the covers, htracr relies upon node_pcap 
+<https://github.com/mranney/node_pcap/> and node-optimist 
+<https://github.com/substack/node-optimist>.
 
 
 ## Using htracr
@@ -59,6 +63,35 @@ Currently, htracr only captures traffic on port 80.
 The slider will adjust the time scale.
 
 
+## Installation Problems?
+
+### libpcap
+
+If npm complains about problems with pcap, like this:
+
+    npm ERR! Failed at the pcap@0.2.7 install script.
+
+it usually means that it couldn't find libpcap when building. See the
+instructions here: <https://github.com/mranney/node_pcap>. 
+
+On my OSX machine, I have to build like this:
+
+  CXXFLAGS=-I/opt/local/include npm install htracr
+  
+because my pcap headers are in a non-standard place (thanks to MacPorts). 
+YMMV.
+
+### npm
+
+Older versions of npm interact strangely with optimist and htracr. If you
+have other issues installing npm, try upgrading npm, then re-installing 
+htracr, like this:
+
+    npm install npm
+    npm install htracr
+
+
+
 ## Contact
 
 Mark Nottingham <mnot@mnot.net>
@@ -69,6 +102,9 @@ http://github.com/mnot/htracr/
 ## Obligatory Screenshot
 
 ![htracr screenshot](http://mnot.github.com/htracr/htracr.png)
+
+
+
 
 
 ## TODO
