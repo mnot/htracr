@@ -1,7 +1,7 @@
 { "name" : "htracr"
 , "description" : "HTTP sniffing and low-level visualisation"
 , "keywords" : [ "sniffer", "HTTP", "trace" ]
-, "version" : "0.1.3"
+, "version" : "0.1.4"
 , "homepage" : "https://github.com/mnot/htracr"
 , "author" : "Mark Nottingham <mnot@mnot.net> (http://www.mnot.net/)"
 , "contributors" :
@@ -16,12 +16,13 @@
   }
 , "directories" : { "lib" : "./lib" }
 , "bin" : { "htracr" : "./htracr.js" }
-, "engines" : { "node" : ">=0.2.3" }
-, "scripts" :
-  { "preinstall" : "scripts/if-i-fail-please-upgrade-npm.js" }
+, "engines" : 
+  { "node" : ">=0.2.3"
+  , "npm" : ">=0.2.16"
+  }
 , "dependencies" : 
-  { "pcap" : ">0.2.5",
-    "optimist" : ">0.1.0",
+  { "pcap" : ">=0.2.6"
+  , "optimist" : ">=0.1.5"
   }
 , "licenses" :
   [ { "type" : "MIT"
