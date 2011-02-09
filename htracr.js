@@ -19,11 +19,12 @@ var htracr = {
   drop_watcher: undefined,
   device: '',
   err: undefined,
+  sniff_port: 80,
 
   start_capture: function() {
     var self = this
     self.clear()
-    var f = "tcp port 80"
+    var f = "tcp port " + self.sniff_port
     var b = 10
     self.pcap_session = pcap.createSession(self.device, f, (b * 1024 * 1024))
     this.setup_listeners()
@@ -56,7 +57,7 @@ var htracr = {
 
   load_file: function(filename) {
     var self = this
-    var f = "" // sniff all ports when we load a file?
+    var f = "tcp port " + self.sniff_port
     self.pcap_session = pcap.createOfflineSession(filename, f)
     this.setup_listeners()
   },
