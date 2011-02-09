@@ -23,10 +23,12 @@ more information about npm.
 See 'Installation Problems?' below if you have any issues getting htracr
 onto your system.
 
-Under the covers, htracr relies upon node_pcap 
-<https://github.com/mranney/node_pcap/>, node-optimist 
-<https://github.com/substack/node-optimist> and formidable 
-<https://github.com/felixge/node-formidable>.
+Under the covers, htracr relies upon: 
+* [node_pcap](https://github.com/mranney/node_pcap/), 
+* [Raphael](http://raphaeljs.com/),
+* [JQuery](http://jquery.com/),
+* [optimist](https://github.com/substack/node-optimist), and
+* [formidable](https://github.com/felixge/node-formidable).
 
 
 ## Using htracr
