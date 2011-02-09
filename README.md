@@ -9,26 +9,26 @@ actually happening on the wire between your browser and the Web.
 
 ## Installing htracr
 
-First you'll need Node <http://nodejs.org> and its package manager, npm
-<http://npmjs.org>. You'll also need a modern Web browser (known to work: 
-Safari 5, FireFox 4, and Chrome).
+First you'll need [Node](http://nodejs.org/) and its package manager, 
+[npm](http://npmjs.org/). You'll also need a modern Web browser 
+(known to work: Safari 5, FireFox 4, and Chrome).
 
 Then, htracr can be installed with npm like this:
 
   > npm install htracr
 
-which will install dependencies automatically. See <http://npmjs.org/> for 
-more information about npm.
+which will install dependencies automatically. 
 
 See 'Installation Problems?' below if you have any issues getting htracr
 onto your system.
 
 Under the covers, htracr relies upon: 
-* [node_pcap](https://github.com/mranney/node_pcap/), 
-* [Raphael](http://raphaeljs.com/),
-* [JQuery](http://jquery.com/),
-* [optimist](https://github.com/substack/node-optimist), and
-* [formidable](https://github.com/felixge/node-formidable).
+
+ * [node_pcap](https://github.com/mranney/node_pcap/), 
+ * [Raphael](http://raphaeljs.com/),
+ * [JQuery](http://jquery.com/),
+ * [optimist](https://github.com/substack/node-optimist), and
+ * [formidable](https://github.com/felixge/node-formidable).
 
 
 ## Using htracr
