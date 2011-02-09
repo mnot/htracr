@@ -24,8 +24,9 @@ See 'Installation Problems?' below if you have any issues getting htracr
 onto your system.
 
 Under the covers, htracr relies upon node_pcap 
-<https://github.com/mranney/node_pcap/> and node-optimist 
-<https://github.com/substack/node-optimist>.
+<https://github.com/mranney/node_pcap/>, node-optimist 
+<https://github.com/substack/node-optimist> and formidable 
+<https://github.com/felixge/node-formidable>.
 
 
 ## Using htracr
@@ -146,7 +147,7 @@ http://github.com/mnot/htracr/
 - per-server stats
 - allow removing connections / servers
 - keyboard controls
-- dump / load pcap sessions
+- dump pcap sessions
 - magnifier, because packets get lost between the pixels
 
 ### Bugs

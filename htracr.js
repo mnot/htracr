@@ -2,6 +2,7 @@
 
 var argv = require('optimist').argv
 var dns = require('dns')
+var fs = require('fs')
 var node_http = require('http')
 var node_url = require('url')
 var pcap = require("pcap")
@@ -17,6 +18,7 @@ var htracr = {
   pcap_session: undefined,
   drop_watcher: undefined,
   device: '',
+  err: undefined,
 
   start_capture: function() {
     var self = this
@@ -43,10 +45,20 @@ var htracr = {
     var self = this
     if (self.pcap_session == undefined)
       return
-    clearInterval(self.drop_watcher)
+    if (self.drop_watcher) {
+      clearInterval(self.drop_watcher)
+    }
+    self.drop_watcher == undefined
     self.pcap_session.close()
     self.pcap_session = undefined
     console.log("Stopped sniffing")
+  },
+
+  load_file: function(filename) {
+    var self = this
+    var f = "" // sniff all ports when we load a file?
+    self.pcap_session = pcap.createOfflineSession(filename, f)
+    this.setup_listeners()
   },
 
   clear: function () {
@@ -54,12 +66,17 @@ var htracr = {
     self.packets = []
     self.conns = {}
     self.msgs = {}
+    self.err = undefined
+    if (self.drop_watcher) {
+      clearInterval(self.drop_watcher)
+    }
+    self.drop_watcher = undefined
   },
 
   get_conns: function () {
     var self = this
-    var got_something = false;
-    var o = {}
+    var got_something = (self.err != undefined);
+    var o = {'error': self.err}
     for (server in self.conns) {
       for (conn in self.conns[server]) {
         // weed out servers without HTTP requests in them

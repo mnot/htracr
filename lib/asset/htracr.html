@@ -18,9 +18,13 @@
 <script src="/jquery-ui"></script>
 <script src="/htracr-client"></script>
 
+<form action="/upload" method="POST" enctype="multipart/form-data" id="upload">
 <div id="control">
   <input id="start" type="submit" value="start" onclick="return htracr.start_capture();" title="start capturing">
   <input id="stop" type="submit" value="stop" onclick="return htracr.stop_capture();" title="stop capture">
+  <input id="show-upload" type="submit" onclick="return false;" value="upload pcap">
+  <input id="filename" type="file" name="pcap" size="0" value="upload pcap">
+  <br>
 	<div id="zoom" title="slide to change the time scale"></div>
 	<br>
 	<div id="features">
@@ -28,7 +32,7 @@
 		<span id="redirs" class="toggle on" title="show or hide redirects"> redirects </span>
 	</div>
 </div>
-
+</form>
 
 </body>
 </html>

@@ -23,6 +23,7 @@
 , "dependencies" : 
   { "pcap" : ">=0.2.6"
   , "optimist" : ">=0.1.5"
+  , "formidable" : ">=0.9.11"
   }
 , "licenses" :
   [ { "type" : "MIT"
