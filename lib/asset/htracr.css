@@ -24,6 +24,12 @@ table {
   font-family: Arial, Helvetica, sans-serif;;
   font-size: 12px;
 }
+td.direction {
+  font-weight: bolder;
+  font-size: 18px;
+  width: 20px;
+  text-align: right;
+}
 pre {
 	font-family: monospace;
 	font-size: 0.85em;
