@@ -21,6 +21,18 @@ var htracr = {
   err: undefined,
   sniff_port: 80,
 
+  clear: function () {
+    var self = this
+    self.packets = []
+    self.conns = {}
+    self.msgs = {}
+    self.err = undefined
+    if (self.drop_watcher) {
+      clearInterval(self.drop_watcher)
+    }
+    self.drop_watcher = undefined
+  },
+
   start_capture: function() {
     var self = this
     self.clear()
@@ -60,18 +72,6 @@ var htracr = {
     var f = "tcp port " + self.sniff_port
     self.pcap_session = pcap.createOfflineSession(filename, f)
     this.setup_listeners()
-  },
-
-  clear: function () {
-    var self = this
-    self.packets = []
-    self.conns = {}
-    self.msgs = {}
-    self.err = undefined
-    if (self.drop_watcher) {
-      clearInterval(self.drop_watcher)
-    }
-    self.drop_watcher = undefined
   },
 
   get_conns: function () {
