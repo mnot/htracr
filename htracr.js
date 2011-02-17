@@ -302,6 +302,19 @@ var htracr = {
       data_sz: packet.link.ip.tcp.data_bytes,
       packet_id: self.packets.length
     }
+
+    if (detail.data_sz == 0 && 
+        detail.flags.ack && 
+        ! detail.flags.syn && 
+        ! detail.flags.rst &&
+        ! detail.flags.fin &&
+        ! detail.flags.psh
+    ) {
+      detail.ack_only = true;
+    } else {
+      detail.ack_only = false;
+    }
+
     self._get_conn(server, local_port).packets.push(detail)
     self.packets.push((packet.link.ip.tcp.data || "").toString('utf8'))
   },
