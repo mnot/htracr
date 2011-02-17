@@ -11,20 +11,22 @@ var util = require('util')
 
 
 var htracr = {
+  device: '',
+  sniff_port: 80,
   packets: [],
-  conns: {},
+  capture: {sessions: {}},         // [server_ip][local_port] = {...}
+  captured_packets: 0,
   msgs: {},
   server_names: {},
   pcap_session: undefined,
   drop_watcher: undefined,
-  device: '',
   err: undefined,
-  sniff_port: 80,
 
   clear: function () {
     var self = this
     self.packets = []
-    self.conns = {}
+    self.capture = {sessions: {}}
+    self.captured_packets = 0
     self.msgs = {}
     self.err = undefined
     if (self.drop_watcher) {
@@ -38,14 +40,18 @@ var htracr = {
     self.clear()
     var f = "tcp port " + self.sniff_port
     var b = 10
+    // FIXME: where did error catch go?
+    self.capture.start = new Date().getTime()
     self.pcap_session = pcap.createSession(self.device, f, (b * 1024 * 1024))
     this.setup_listeners()
+    console.log('hmm')
     console.log("Sniffing on " + self.pcap_session.device_name)
     
     // Check for pcap dropped packets on an interval
     self.drop_watcher = setInterval(function () {
       var stats = self.pcap_session.stats()
       if (stats.ps_drop > 0) {
+        // TODO: notify browser through err as well
         console.log(
           "dropped packets, need larger buffer or less work to do: " 
           + util.inspect(stats)
@@ -56,12 +62,14 @@ var htracr = {
   
   stop_capture: function () {
     var self = this
-    if (self.pcap_session == undefined)
+    if (self.pcap_session == undefined) {
       return
+    }
     if (self.drop_watcher) {
       clearInterval(self.drop_watcher)
     }
     self.drop_watcher == undefined
+    self.capture.end = new Date().getTime()
     self.pcap_session.close()
     self.pcap_session = undefined
     console.log("Stopped sniffing")
@@ -70,36 +78,9 @@ var htracr = {
   load_file: function(filename) {
     var self = this
     var f = "tcp port " + self.sniff_port
+    console.log("Processing upload file: " + filename)
     self.pcap_session = pcap.createOfflineSession(filename, f)
-    this.setup_listeners()
-  },
-
-  get_conns: function () {
-    var self = this
-    var got_something = (self.err != undefined);
-    var o = {'error': self.err}
-    for (server in self.conns) {
-      for (conn in self.conns[server]) {
-        // weed out servers without HTTP requests in them
-        item_loop:
-        for (var i = 0; i < self.conns[server][conn].length; i++) {
-          var item = self.conns[server][conn][i]
-          if (item.what == 'http-req-start') {
-            if (o[server] == undefined) {
-              got_something = true
-              o[server] = {}              
-            }
-            o[server][conn] = self.conns[server][conn]
-            break item_loop
-          }
-        }
-      }
-    }
-    if (! got_something) {
-      return null
-    } else {
-      return o
-    }
+    self.setup_listeners()
   },
 
   setup_listeners: function () {
@@ -108,141 +89,268 @@ var htracr = {
 
     // listen for packets, decode them, and feed TCP to the tracker
     self.pcap_session.on('packet', function (raw_packet) {
+      self.captured_packets += 1
       var packet = pcap.decode.packet(raw_packet)
-      // NOTE: ordering is important here!
-      self.note_packet(packet)
+      self.save_packet(packet)
+      // This needs to happen AFTER we note the packet.
       tcp_tracker.track_packet(packet)
     })
 
     tcp_tracker.on("start", function (session) {
-      self.note_session(session, 'tcp-start')
+      var conn = self.get_conn(session)
+      conn.start = session.current_cap_time
     })
 
     tcp_tracker.on("retransmit", function (session, direction, seqno) {
-      self.note_session(session, 'tcp-retransmit', 
-        {'direction': direction, 'seqno': seqno}
+      var conn = self.get_conn(session)
+      conn.events.push(
+        self.format_event(session, 'retransmit', {
+          'direction': direction,
+          'seqno': seqno
+        })
       )
-    })
-
-    tcp_tracker.on("end", function (session) {
-      self.note_session(session, 'tcp-end')
     })
 
     tcp_tracker.on("reset", function (session) {
       // Right now, it's only from dst.
-      self.note_session(session, 'tcp-reset')
+      var conn = self.get_conn(session)
+      conn.events.push(self.format_event(session, 'reset'))
     })
 
     tcp_tracker.on("syn retry", function (session) {
-      self.note_session(session, 'tcp-retry')
+      var conn = self.get_conn(session)
+      conn.events.push(self.format_event(session, 'retry'))
+    })
+      
+    tcp_tracker.on("end", function (session) {
+      var conn = self.get_conn(session)
+      conn.end = session.current_cap_time
+      var last_req = self.get_last(conn.http_reqs)
+      if (last_req && ! last_req.end) {
+        last_req.end = conn.end
+        last_req.end_packet = conn.packets.length - 1
+        self.msg_stats(last_req, conn)
+      }
+      var last_res = self.get_last(conn.http_ress)
+      if (last_res && ! last_res.end) {
+        last_res.end = conn.end
+        last_res.end_packet = conn.packets.length - 1
+        self.msg_stats(last_res, conn)
+      }
+    })
+    
+
+    tcp_tracker.on('http request', function (session, http) {
+      var conn = self.get_conn(session)
+      var corrected = self.rewind_packets(conn.packets, 'out', http.request)
+      conn.http_reqs.push({
+        'kind': 'req',
+        'start': corrected.start,
+        'start_packet': corrected.index,
+        'data': http.request
+      })
+    })
+
+    tcp_tracker.on('http request body', function (session, http, data) {
+    })
+
+    tcp_tracker.on('http request complete', function (session, http) {
+      var conn = self.get_conn(session)
+      self.get_last(conn.http_reqs).end = session.current_cap_time
+      self.get_last(conn.http_reqs).end_packet = conn.packets.length - 1
+      self.msg_stats(self.get_last(conn.http_reqs), conn)
+    })
+
+    tcp_tracker.on('http response', function (session, http) {
+      var conn = self.get_conn(session)
+      var corrected = self.rewind_packets(conn.packets, 'in', http.response)
+      conn.http_ress.push({
+        'kind': 'res',
+        'start': corrected.start,
+        'start_packet': corrected.index,
+        'data': http.response
+      })
+    })
+
+    tcp_tracker.on('http response body', function (session, http, data) {
+    })
+
+    tcp_tracker.on('http response complete', function (session, http) {
+      var conn = self.get_conn(session)
+      self.get_last(conn.http_ress).end = session.current_cap_time
+      self.get_last(conn.http_ress).end_packet = conn.packets.length - 1
+      self.msg_stats(self.get_last(conn.http_ress), conn)
     })
 
     tcp_tracker.on('http error', function (session, direction, error) {
       console.log(" HTTP parser error: " + error)
-      // TODO - probably need to force this transaction to be over at this point
+      // TODO - probably need to force this transaction to be over
     })
-
-    tcp_tracker.on('http request', function (session, http) {
-      self.note_session(session, 'http-req-start', http.request)
-    })
-
-    tcp_tracker.on('http request body', function (session, http, data) {
-      self.note_session(session, 'http-req-data', {length: data.length})
-    })
-
-    tcp_tracker.on('http request complete', function (session, http) {
-      self.note_session(session, 'http-req-end')
-    })
-
-    tcp_tracker.on('http response', function (session, http) {
-      self.note_session(session, 'http-res-start', http.response)
-    })
-
-    tcp_tracker.on('http response body', function (session, http, data) {
-      self.note_session(session, 'http-res-data', {length: data.length})
-    })
-
-    tcp_tracker.on('http response complete', function (session, http) {
-      self.note_session(session, 'http-res-end')
-    })
-
   },
 
-  note_session: function (session, what, details) {
-    var self = this;
-    if (! details) {
-      details = {}
+  // search backwards through a list of packets and find where a http message
+  // really started. This is imprecise, but should be OK most of the time.
+  // see: https://github.com/mranney/node_pcap/issues#issue/9
+  rewind_packets: function (packets, interesting_dir, msg) {
+    var bytes = [
+      msg.method || "",
+      msg.url || "",
+      msg.status_code || "", // don't have access to phrase :(
+      " HTTP/1.x", // works out the same for request or response
+      "\r\n"
+    ]
+    for (var h in msg.headers) {
+      if (msg.headers.hasOwnProperty(h)) {
+        bytes.push(h + ": " + msg.headers[h] + "\r\n")        
+      }
     }
-    if (session.dst.split(":")[1] == 80) {
-      var server = session.dst
-      var local_port = session.src.split(":")[1]
-    } else {
-      var server = session.src
-      var local_port = session.dst.split(":")[1]
+    bytes.push("\r\n")
+    var num_bytes = bytes.join("").length
+    
+    var num_packets = 0
+    var bytes_seen = 0
+    for (var i = packets.length - 1; i >= 0; i -= 1) {
+      var packet = packets[i]
+      if (packet.dir == interesting_dir && packet.data_sz > 0) {
+        bytes_seen += packet.data_sz
+        num_packets += 1
+      }
+      if (bytes_seen >= num_bytes) {
+        return {
+          start: packet.time,
+          count: num_packets,
+          index: i
+        }
+      }
     }
-    details.time = session.current_cap_time
-    details.what = what
-    self.note(server, local_port, details)
+    // Shouldn't get here...
+    console.log("Couldn't find the start of message: " + msg);
+    return {
+      start: msg.time,
+      count: 1,
+      index: packets.length
+    };
   },
 
-  note_packet: function (packet) {
-    var self = this;
-    var what;
+  // compute stats for the given HTTP message
+  msg_stats: function (msg, conn) {
+    var target_dir = msg.kind == 'req' ? 'out' : 'in'
+    var packet_count = 0
+    var byte_count = 0
+    for (var i = msg.start_packet; i <= msg.end_packet; i += 1) {
+      var packet = conn.packets[i]
+      if (packet.data_sz > 0 && packet.dir === target_dir) {
+        packet_count += 1
+        byte_count += packet.data_sz
+      }
+    }
+    msg.data_packet_count = packet_count
+    msg.packet_byte_count = byte_count
+  },
+
+  // return a data structure for an event
+  format_event: function (session, event_kind, data) {
+    var out_data = data || {}
+    out_data.time = session.current_cap_time
+    out_data.kind = event_kind
+    return out_data
+  },
+
+  // given a packet, save its data in self.packets and info in self.capture
+  save_packet: function (packet) {
+    var self = this
+    var direction
+    var server
+    var local_port
+
+    // fake in start and end for loaded sessions
+    if (! self.capture.start) {
+      self.capture.start = packet.pcap_header.time_ms
+    }
+    if (! self.capture.end || self.capture.end < packet.pcap_header.time_ms) {
+      self.capture.end = packet.pcap_header.time_ms
+    }
+
     if (packet.link.ip.tcp.dport == 80) {
-      var server_ip = packet.link.ip.daddr
-      var server = server_ip + ":" + packet.link.ip.tcp.dport
-      var local_port = packet.link.ip.tcp.sport
-      what = "packet-out"
+      server = packet.link.ip.daddr
+      local_port = packet.link.ip.tcp.sport
+      direction = "out"
     } else {
-      var server_ip = packet.link.ip.saddr
-      var server = server_ip + ":" + packet.link.ip.tcp.sport
-      var local_port = packet.link.ip.tcp.dport
-      what = "packet-in"
+      server = packet.link.ip.saddr
+      local_port = packet.link.ip.tcp.dport
+      direction = "in"
     }
-    if (self.server_names[server_ip] == undefined) {
-      self.server_names[server_ip] = ""
-      dns.reverse(server_ip, function(err, domains) {
+
+    // reverse lookup
+    if (self.server_names[server] == undefined) {
+      self.server_names[server] = ""
+      dns.reverse(server, function(err, domains) {
         if (! err) {
-          self.server_names[server_ip] = domains[0]
+          self.server_names[server] = domains[0]
         } else {
-          delete self.server_names[server_ip]
+          delete self.server_names[server]
         }
       })
     }
+
     var detail = {
       time: packet.pcap_header.time_ms,
-      what: what,
       ws: packet.link.ip.tcp.window_size,
+      dir: direction,
       flags: packet.link.ip.tcp.flags,
       options: packet.link.ip.tcp.options,
       data_sz: packet.link.ip.tcp.data_bytes,
-      packet_id: self.packets.length,
+      packet_id: self.packets.length
     }
-    self.note(server, local_port, detail)
-    // FIXME - encoding
+    self._get_conn(server, local_port).packets.push(detail)
     self.packets.push((packet.link.ip.tcp.data || "").toString('utf8'))
   },
 
-  note: function (server, local_port, details) {
-    if (this.conns[server] == undefined) {
-      this.conns[server] = {}
+  // given a TCP session, return the relevant data structure in self.capture
+  get_conn: function (tcp_session) {
+    var self = this
+    var server
+    var local_port
+    if (tcp_session.dst.split(":")[1] == self.sniff_port) {
+      server = tcp_session.dst.split(":")[0]
+      local_port = tcp_session.src.split(":")[1]
+    } else {
+      server = tcp_session.src.split(":")[0]
+      local_port = tcp_session.dst.split(":")[1]
     }
-    var server_conn = this.conns[server]
-    if (server_conn[local_port] == undefined)
-      server_conn[local_port] = []
-    server_conn[local_port].push(details)
+    return self._get_conn(server, local_port)
   },
   
-  usage: function () {
-    console.log("Usage: htracr listen-port [device]")
-    process.exit(1)
+  // given a server and local_port, return the relevant data structure  
+  _get_conn: function (server, local_port) {
+    if (this.capture.sessions[server] == undefined) {
+      this.capture.sessions[server] = {}
+    }
+    var server_conn = this.capture.sessions[server]
+    if (server_conn[local_port] == undefined) {
+      server_conn[local_port] = {
+        'server': server,
+        'local_port': local_port,
+        'events': [],
+        'packets': [],
+        'http_reqs': [],
+        'http_ress': []
+      }
+    }
+    return server_conn[local_port]
+  },
+
+  get_last: function (arr) {
+    return arr[arr.length - 1]
   }
 }
 
+
 // port to listen to 
-var port = parseInt(argv._[0])
+var port = parseInt(argv._[0], 10)
 if (! port || port == NaN) {
-  htracr.usage()
+  console.log("Usage: htracr listen-port [device]")
+  process.exit(1)
 }
 
 // device to snoop on

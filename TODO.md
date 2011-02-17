@@ -11,12 +11,14 @@
   - total packets (graph of types?)
   - congestion window (over time?)
   - receive window (over time?)
-  - rtt over time?
+  - rtt calculation / visualisation
 - handle tcp-retransmit / tcp-reset
 - show ack relationships?
+- hide ack-only packets
 
 ### HTTP visualisation
 
+- relate requests to responses (for navigation / referer linking)
 - Highlight message headers that are split across packets
 - Highlight pipelining
 - message stats
@@ -32,16 +34,19 @@
 - configurable sniff port(s) in-browser
 - printing
 - trace DNS
+- show scale in round trips
 - per-server stats
 - allow removing connections / servers
 - keyboard controls
 - dump pcap sessions
 - magnifier, because packets get lost between the pixels
+- allow copying from msg (e.g., url )
+- make highlighting more prominent (e.g., pulse animation?)
 
 ### Bugs
 
-- needs one mother of a refactoring
 - header names are case-sensitive here
+- proper handling for location headers (e.g., relative)
 - prettify packet display
 - need HTTP status phrase
 - some requests not drawn in firefox 3

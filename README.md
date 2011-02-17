@@ -63,7 +63,8 @@ the appopriate command line something like:
 Then, press 'start' to start capturing HTTP traffic, and 'stop' to show it.
 Currently, htracr only captures traffic on port 80.
 
-The slider will adjust the time scale.
+The slider will adjust the time scale. You can use the keyboard arrows 
+to navigate between packets and HTTP messages.
 
 
 ## Installation Problems?

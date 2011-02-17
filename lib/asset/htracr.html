@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 	<title>htracr</title>
@@ -16,12 +17,14 @@
 <script src="/g.raphael"></script>
 <script src="/jquery"></script>
 <script src="/jquery-ui"></script>
-<script src="/htracr-client"></script>
+<script src="/htracr-ui"></script>
+<script src="/htracr-data"></script>
+<script src="/htracr-comm"></script>
 
 <form action="/upload" method="POST" enctype="multipart/form-data" id="upload">
 <div id="control">
-  <input id="start" type="submit" value="start" onclick="return htracr.start_capture();" title="start capturing">
-  <input id="stop" type="submit" value="stop" onclick="return htracr.stop_capture();" title="stop capture">
+  <input id="start" type="submit" value="start" onclick="return htracr.comm.start_capture();" title="start capturing">
+  <input id="stop" type="submit" value="stop" onclick="return htracr.comm.stop_capture();" title="stop capture">
   <input id="show-upload" type="submit" onclick="return false;" value="load pcap">
   <input id="filename" type="file" name="pcap" size="0">
   <br>
