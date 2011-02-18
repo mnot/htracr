@@ -156,9 +156,10 @@ var htracr = {
 
     tcp_tracker.on('http request complete', function (session, http) {
       var conn = self.get_conn(session)
-      self.get_last(conn.http_reqs).end = session.current_cap_time
-      self.get_last(conn.http_reqs).end_packet = conn.packets.length - 1
-      self.msg_stats(self.get_last(conn.http_reqs), conn)
+      var req = self.get_last(conn.http_reqs)
+      req.end = session.current_cap_time
+      req.end_packet = conn.packets.length - 1
+      self.msg_stats(req, conn)
     })
 
     tcp_tracker.on('http response', function (session, http) {
@@ -177,9 +178,12 @@ var htracr = {
 
     tcp_tracker.on('http response complete', function (session, http) {
       var conn = self.get_conn(session)
-      self.get_last(conn.http_ress).end = session.current_cap_time
-      self.get_last(conn.http_ress).end_packet = conn.packets.length - 1
-      self.msg_stats(self.get_last(conn.http_ress), conn)
+      var res = self.get_last(conn.http_ress)
+      res.end = session.current_cap_time
+      res.end_packet = conn.packets.length - 1
+      res.req = conn.http_reqs.length
+      self.get_last(conn.http_reqs).res = conn.http_ress.length
+      self.msg_stats(res, conn)
     })
 
     tcp_tracker.on('http error', function (session, direction, error) {
