@@ -37,8 +37,8 @@
 - show scale in round trips
 - per-server stats
 - allow removing connections / servers
-- keyboard controls
-- dump pcap sessions
+- improved keyboard controls
+- dump pcap sessions (requires support in node_pcap)
 - magnifier, because packets get lost between the pixels
 - allow copying from msg (e.g., url )
 - make highlighting more prominent (e.g., pulse animation?)
@@ -47,10 +47,8 @@
 
 - header names are case-sensitive here
 - proper handling for location headers (e.g., relative)
-- prettify packet display
 - need HTTP status phrase
 - some requests not drawn in firefox 3
-- connection: close on requests - do we get a http-res-end?
 - pipelining
-- improve RTT calculation
 - keep centre on zoom
+- IE capture caching
