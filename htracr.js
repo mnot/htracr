@@ -44,7 +44,6 @@ var htracr = {
     self.capture.start = new Date().getTime()
     self.pcap_session = pcap.createSession(self.device, f, (b * 1024 * 1024))
     this.setup_listeners()
-    console.log('hmm')
     console.log("Sniffing on " + self.pcap_session.device_name)
     
     // Check for pcap dropped packets on an interval
