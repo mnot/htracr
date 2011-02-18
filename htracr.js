@@ -205,10 +205,10 @@ var htracr = {
     ]
     for (var h in msg.headers) {
       if (msg.headers.hasOwnProperty(h)) {
-        bytes.push(h + ": " + msg.headers[h] + "\r\n")        
+        bytes.push(h + ": " + msg.headers[h] + "\n") // conservative - no \r
       }
     }
-    bytes.push("\r\n")
+    bytes.push("\n") // conservative - no \r
     var num_bytes = bytes.join("").length
     
     var num_packets = 0
