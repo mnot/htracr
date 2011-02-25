@@ -180,8 +180,6 @@ var htracr = {
       var res = self.get_last(conn.http_ress)
       res.end = session.current_cap_time
       res.end_packet = conn.packets.length - 1
-      res.req = conn.http_reqs.length
-      self.get_last(conn.http_reqs).res = conn.http_ress.length
       self.msg_stats(res, conn)
     })
 
