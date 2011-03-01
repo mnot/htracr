@@ -31,6 +31,7 @@
 
 ### Misc. Features
 
+- help button (modal)
 - configurable sniff port(s) in-browser
 - printing
 - trace DNS
@@ -45,10 +46,11 @@
 
 ### Bugs
 
-- header names are case-sensitive here
+- header names are case-sensitive
 - proper handling for location headers (e.g., relative)
 - need HTTP status phrase
-- some requests not drawn in firefox 3
+- some requests not drawn in firefox 3?
 - pipelining
 - keep centre on zoom
 - IE capture caching
+- pipelined responses -- see <https://github.com/mranney/node_pcap/issues#issue/20>
