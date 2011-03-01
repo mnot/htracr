@@ -19,11 +19,10 @@
 ### HTTP visualisation
 
 - relate requests to responses (for navigation / referer linking)
-- Highlight message headers that are split across packets
-- Highlight pipelining
 - message stats
   - message delay
   - number of round trips
+- highlight unusual methods / status codes
 - click on response to open window with it
 - click on request to re-make request
 - server stall time (based upon rtt / packet sizes / psh)
@@ -37,7 +36,7 @@
 - trace DNS
 - show scale in round trips
 - per-server stats
-- allow removing connections / servers
+- allow removing connections / servers, or focus on one
 - improved keyboard controls
 - dump pcap sessions (requires support in node_pcap)
 - magnifier, because packets get lost between the pixels

@@ -158,7 +158,7 @@ var htracr = {
       var req = self.get_last(conn.http_reqs)
       req.end = session.current_cap_time
       req.end_packet = conn.packets.length - 1
-      self.msg_stats(req, conn)
+      self.msg_stats(req, conn, conn.http_reqs.length)
     })
 
     tcp_tracker.on('http response', function (session, http) {
@@ -180,7 +180,7 @@ var htracr = {
       var res = self.get_last(conn.http_ress)
       res.end = session.current_cap_time
       res.end_packet = conn.packets.length - 1
-      self.msg_stats(res, conn)
+      self.msg_stats(res, conn, conn.http_ress.length)
     })
 
     tcp_tracker.on('http error', function (session, direction, error) {
@@ -234,7 +234,7 @@ var htracr = {
   },
 
   // compute stats for the given HTTP message
-  msg_stats: function (msg, conn) {
+  msg_stats: function (msg, conn, msg_offset) {
     var target_dir = msg.kind == 'req' ? 'out' : 'in'
     var packet_count = 0
     var byte_count = 0
@@ -243,6 +243,7 @@ var htracr = {
       if (packet.data_sz > 0 && packet.dir === target_dir) {
         packet_count += 1
         byte_count += packet.data_sz
+        packet.msg = msg_offset - 1
       }
     }
     msg.data_packet_count = packet_count
