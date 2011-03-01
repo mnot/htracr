@@ -14,7 +14,6 @@
   - rtt calculation / visualisation
 - handle tcp-retransmit / tcp-reset
 - show ack relationships?
-- hide ack-only packets
 
 ### HTTP visualisation
 
@@ -36,10 +35,13 @@
 - trace DNS
 - show scale in round trips
 - per-server stats
-- allow removing connections / servers, or focus on one
-- improved keyboard controls
 - dump pcap sessions (requires support in node_pcap)
 - magnifier, because packets get lost between the pixels
+
+### UI Tweaks
+
+- allow removing connections / servers, or focus on one
+- improved keyboard controls
 - allow copying from msg (e.g., url )
 - make highlighting more prominent (e.g., pulse animation?)
 
@@ -49,7 +51,6 @@
 - proper handling for location headers (e.g., relative)
 - need HTTP status phrase
 - some requests not drawn in firefox 3?
-- pipelining
 - keep centre on zoom
 - IE capture caching
 - pipelined responses -- see <https://github.com/mranney/node_pcap/issues#issue/20>
