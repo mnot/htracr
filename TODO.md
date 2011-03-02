@@ -53,4 +53,3 @@
 - some requests not drawn in firefox 3?
 - keep centre on zoom
 - IE capture caching
-- pipelined responses -- see <https://github.com/mranney/node_pcap/issues#issue/20>
