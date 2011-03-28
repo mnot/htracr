@@ -273,6 +273,11 @@ var htracr = {
       self.capture.end = packet.pcap_header.time_ms
     }
 
+    if (! packet.link.ip) {
+      // not an IP packet
+      return
+    }
+
     if (packet.link.ip.tcp.dport == 80) {
       server = packet.link.ip.daddr
       local_port = packet.link.ip.tcp.sport
