@@ -25,7 +25,6 @@
 - click on response to open window with it
 - click on request to re-make request
 - server stall time (based upon rtt / packet sizes / psh)
-- content types - message colours?
 
 ### Misc. Features
 
