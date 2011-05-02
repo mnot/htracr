@@ -15,7 +15,7 @@ First you'll need [Node](http://nodejs.org/) and its package manager,
 
 Then, htracr can be installed with npm like this:
 
-  > npm install htracr
+  > sudo npm -g install htracr
 
 which will install dependencies automatically. 
 
@@ -33,7 +33,7 @@ Under the covers, htracr relies upon:
 
 ## Using htracr
 
-htracer is designed for use on the same machine your web browser or other 
+htracr is designed for use on the same machine your web browser or other 
 client runs on; while it's possible to run it on a server, it'll be difficult
 to make sense of all of the traffic coming to a normal server.
 
@@ -56,7 +56,7 @@ on. For example:
   > htracr 8000 eth0
   
 and in some cases, you may need permission to listen to the device, making 
-the appopriate command line something like:
+the appropriate command line something like:
 
   > sudo htracr 8000 eth0
 
@@ -80,7 +80,8 @@ instructions here: <https://github.com/mranney/node_pcap>.
 
 On my OSX machine, I have to build like this:
 
-  CXXFLAGS=-I/opt/local/include npm install htracr
+  sudo bash
+  CXXFLAGS=-I/opt/local/include npm -g install htracr
   
 because my pcap headers are in a non-standard place (thanks to MacPorts). 
 YMMV.
@@ -89,11 +90,7 @@ YMMV.
 
 Older versions of npm interact strangely with optimist and htracr. If you
 have other issues installing npm, try upgrading npm, then re-installing 
-htracr, like this:
-
-    npm install npm
-    npm install htracr
-
+htracr.
 
 
 ## Contact
