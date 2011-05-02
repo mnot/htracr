@@ -78,10 +78,9 @@ If npm complains about problems with pcap, like this:
 it usually means that it couldn't find libpcap when building. See the
 instructions here: <https://github.com/mranney/node_pcap>. 
 
-On my OSX machine, I have to build like this:
+On my OSX machine, I have to build like this (becoming root first):
 
-  sudo bash
-  CXXFLAGS=-I/opt/local/include npm -g install htracr
+  > CXXFLAGS=-I/opt/local/include npm -g install htracr
   
 because my pcap headers are in a non-standard place (thanks to MacPorts). 
 YMMV.
