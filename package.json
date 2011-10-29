@@ -16,11 +16,11 @@
   }
 , "main" : "lib/index.js"
 , "bin" : { "htracr" : "./htracr.js" }
-, "engines" : 
+, "engines" :
   { "node" : ">=0.4.0"
   , "npm" : ">=0.2.18"
   }
-, "dependencies" : 
+, "dependencies" :
   { "pcap" : ">=0.2.8"
   , "optimist" : ">=0.1.5"
   , "formidable" : ">=0.9.11"

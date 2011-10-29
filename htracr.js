@@ -45,20 +45,20 @@ var htracr = {
     self.pcap_session = pcap.createSession(self.device, f, (b * 1024 * 1024))
     this.setup_listeners()
     console.log("Sniffing on " + self.pcap_session.device_name)
-    
+
     // Check for pcap dropped packets on an interval
     self.drop_watcher = setInterval(function () {
       var stats = self.pcap_session.stats()
       if (stats.ps_drop > 0) {
         // TODO: notify browser through err as well
         console.log(
-          "dropped packets, need larger buffer or less work to do: " 
+          "dropped packets, need larger buffer or less work to do: "
           + util.inspect(stats)
         )
       }
     }, 2000)
   },
-  
+
   stop_capture: function () {
     var self = this
     if (self.pcap_session == undefined) {
@@ -120,7 +120,7 @@ var htracr = {
       var conn = self.get_conn(session)
       conn.events.push(self.format_event(session, 'retry'))
     })
-      
+
     tcp_tracker.on("end", function (session) {
       var conn = self.get_conn(session)
       conn.end = session.current_cap_time
@@ -137,7 +137,7 @@ var htracr = {
         self.msg_stats(last_res, conn)
       }
     })
-    
+
 
     tcp_tracker.on('http request', function (session, http) {
       var conn = self.get_conn(session)
@@ -207,7 +207,7 @@ var htracr = {
     }
     bytes.push("\n") // conservative - no \r
     var num_bytes = bytes.join("").length
-    
+
     var num_packets = 0
     var bytes_seen = 0
     for (var i = packets.length - 1; i >= 0; i -= 1) {
@@ -310,9 +310,9 @@ var htracr = {
       packet_id: self.packets.length
     }
 
-    if (detail.data_sz == 0 && 
-        detail.flags.ack && 
-        ! detail.flags.syn && 
+    if (detail.data_sz == 0 &&
+        detail.flags.ack &&
+        ! detail.flags.syn &&
         ! detail.flags.rst &&
         ! detail.flags.fin &&
         ! detail.flags.psh
@@ -340,8 +340,8 @@ var htracr = {
     }
     return self._get_conn(server, local_port)
   },
-  
-  // given a server and local_port, return the relevant data structure  
+
+  // given a server and local_port, return the relevant data structure
   _get_conn: function (server, local_port) {
     if (this.capture.sessions[server] == undefined) {
       this.capture.sessions[server] = {}
@@ -366,7 +366,7 @@ var htracr = {
 }
 
 
-// port to listen to 
+// port to listen to
 var port = parseInt(argv._[0], 10)
 if (! port || port == NaN) {
   console.log("Usage: htracr listen-port [device]")
