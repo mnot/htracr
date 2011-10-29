@@ -15,7 +15,7 @@ body {
 	opacity: 0.75;
 	border-radius: 1em;
 	padding: 1.5em;
-	overflow: hidden;  
+	overflow: hidden;
 }
 #msg {
   position: absolute;
@@ -44,8 +44,8 @@ pre {
   z-index: -1;
 }
 #control {
-	position: fixed;	
-	bottom: 20px;	
+	position: fixed;
+	bottom: 20px;
 	left: 20px;
 	z-index: 10;
 }
