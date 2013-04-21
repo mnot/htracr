@@ -141,12 +141,14 @@ var htracr = {
 
     tcp_tracker.on('http request', function (session, http) {
       var conn = self.get_conn(session)
-      var corrected = self.rewind_packets(conn.packets, 'out', http.request)
+      var request = self.clone(http.request)
+      var corrected = self.rewind_packets(conn.packets, 'out', request)
       conn.http_reqs.push({
         'kind': 'req',
         'start': corrected.start,
         'start_packet': corrected.index,
-        'data': http.request
+        'num_packets': corrected.count,
+        'data': request
       })
     })
 
@@ -163,12 +165,13 @@ var htracr = {
 
     tcp_tracker.on('http response', function (session, http) {
       var conn = self.get_conn(session)
-      var corrected = self.rewind_packets(conn.packets, 'in', http.response)
+      var response = self.clone(http.response)
+      var corrected = self.rewind_packets(conn.packets, 'in', response)
       conn.http_ress.push({
         'kind': 'res',
         'start': corrected.start,
         'start_packet': corrected.index,
-        'data': http.response
+        'data': response
       })
     })
 
@@ -195,10 +198,12 @@ var htracr = {
   rewind_packets: function (packets, interesting_dir, msg) {
     var bytes = [
       msg.method || "",
+      " ",
       msg.url || "",
+      " ",
       msg.status_code || "", // don't have access to phrase :(
       " HTTP/1.x", // works out the same for request or response
-      "\r\n"
+      "\n"
     ]
     for (var h in msg.headers) {
       if (msg.headers.hasOwnProperty(h)) {
@@ -362,6 +367,15 @@ var htracr = {
 
   get_last: function (arr) {
     return arr[arr.length - 1]
+  },
+  
+  clone: function (obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
   }
 }
 
