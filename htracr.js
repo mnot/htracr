@@ -147,7 +147,6 @@ var htracr = {
         'kind': 'req',
         'start': corrected.start,
         'start_packet': corrected.index,
-        'num_packets': corrected.count,
         'data': request
       })
     })
@@ -194,17 +193,18 @@ var htracr = {
 
   // search backwards through a list of packets and find where a http message
   // really started. This is imprecise, but should be OK most of the time.
-  // see: https://github.com/mranney/node_pcap/issues#issue/9
+  // see: https://github.com/mranney/node_pcap/issues#issue/8
   rewind_packets: function (packets, interesting_dir, msg) {
     var bytes = [
       msg.method || "",
+      msg.status_code || "", // don't have access to phrase :(
       " ",
       msg.url || "",
       " ",
-      msg.status_code || "", // don't have access to phrase :(
-      " HTTP/1.x", // works out the same for request or response
+      "HTTP/1.x", // works out the same for request or response
       "\n"
     ]
+    console.log(bytes)
     for (var h in msg.headers) {
       if (msg.headers.hasOwnProperty(h)) {
         bytes.push(h + ": " + msg.headers[h] + "\n") // conservative - no \r
@@ -213,18 +213,15 @@ var htracr = {
     bytes.push("\n") // conservative - no \r
     var num_bytes = bytes.join("").length
     
-    var num_packets = 0
     var bytes_seen = 0
     for (var i = packets.length - 1; i >= 0; i -= 1) {
       var packet = packets[i]
-      if (packet.dir == interesting_dir && packet.data_sz > 0) {
+      if (packet.dir == interesting_dir) {
         bytes_seen += packet.data_sz
-        num_packets += 1
       }
       if (bytes_seen >= num_bytes) {
         return {
           start: packet.time,
-          count: num_packets,
           index: i
         }
       }
@@ -233,7 +230,6 @@ var htracr = {
     console.log("Couldn't find the start of message: " + msg);
     return {
       start: msg.time,
-      count: 1,
       index: packets.length
     };
   },
@@ -370,12 +366,15 @@ var htracr = {
   },
   
   clone: function (obj) {
-    if (null == obj || "object" != typeof obj) return obj;
-    var copy = obj.constructor();
-    for (var attr in obj) {
-        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    if (null == obj || "object" != typeof obj) {
+      console.log("Cloning a non-object.")
+      return obj
     }
-    return copy;
+    var copy = obj.constructor()
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr]
+    }
+    return copy
   }
 }
 
