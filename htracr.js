@@ -274,18 +274,16 @@ var htracr = {
       self.capture.end = packet.pcap_header.time_ms
     }
 
-    if (! packet.link.ip) {
-      // not an IP packet
-      return
-    }
+    var ipname = ('ipv6' in packet.link) ? 'ipv6' : 'ip',
+        packetTcp = packet.link[ipname].tcp
 
-    if (packet.link.ip.tcp.dport == 80) {
-      server = packet.link.ip.daddr
-      local_port = packet.link.ip.tcp.sport
+    if (packetTcp.dport == 80) {
+      server = packet.link[ipname].daddr
+      local_port = packetTcp.sport
       direction = "out"
     } else {
-      server = packet.link.ip.saddr
-      local_port = packet.link.ip.tcp.dport
+      server = packet.link[ipname].saddr
+      local_port = packetTcp.dport
       direction = "in"
     }
 
@@ -303,11 +301,11 @@ var htracr = {
 
     var detail = {
       time: packet.pcap_header.time_ms,
-      ws: packet.link.ip.tcp.window_size,
+      ws: packetTcp.window_size,
       dir: direction,
-      flags: packet.link.ip.tcp.flags,
-      options: packet.link.ip.tcp.options,
-      data_sz: packet.link.ip.tcp.data_bytes,
+      flags: packetTcp.flags,
+      options: packetTcp.options,
+      data_sz: packetTcp.data_bytes,
       packet_id: self.packets.length
     }
 
@@ -324,7 +322,7 @@ var htracr = {
     }
 
     self._get_conn(server, local_port).packets.push(detail)
-    self.packets.push((packet.link.ip.tcp.data || "").toString('utf8'))
+    self.packets.push((packetTcp.data || "").toString('utf8'))
   },
 
   // given a TCP session, return the relevant data structure in self.capture
