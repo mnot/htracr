@@ -6,7 +6,7 @@ var fs = require('fs')
 var node_http = require('http')
 var node_url = require('url')
 var pcap = require("pcap")
-var server = require('htracr').server
+var server = require('./lib/index').server
 var util = require('util')
 
 
