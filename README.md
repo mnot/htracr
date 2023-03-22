@@ -99,5 +99,5 @@ http://github.com/mnot/htracr/
 
 ## Obligatory Screenshot
 
-![htracr screenshot](http://mnot.github.com/htracr/htracr.png)
+![htracr screenshot](https://mnot.github.io/htracr/htracr.png)
 
